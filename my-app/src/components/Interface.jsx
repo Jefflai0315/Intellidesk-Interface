@@ -3,9 +3,9 @@ import "../App.css";
 import database from '../firebase'; // Adjust the path as needed
 import { ref, set , query, limitToLast, onValue, startAt, endAt, orderByKey} from 'firebase/database';
 import { IoIosBody } from "react-icons/io";
-import chargeBlue from '../imgs/charge_blue.png';
-import camBlue from '../imgs/cam_blue.png';
-import lockBlue from '../imgs/lock_blue.png';
+import chargeGreen from '../imgs/charge_green.png';
+import camGreen from '../imgs/cam_green.png';
+import lockGreen from '../imgs/lock_green.png';
 import unlockWhite from '../imgs/unlock_white.png';
 import logoImg from '../imgs/logo@720x.png';
 import { useSwipeable } from 'react-swipeable';
@@ -22,10 +22,10 @@ const Interface = () => {
       padding: '20px',
       fontFamily: 'Open Sans, sans-serif',
       gap: '2%',
-      // width: '1280px', // Set the width of the container
-      // height: '400px', // Set the height of the container
-      // overflow: 'auto', // Optional: add scrolling to the container
-      // margin: '0 auto'
+      width: '1280px', // Set the width of the container
+      height: '400px', // Set the height of the container
+      overflow: 'auto', // Optional: add scrolling to the container
+      margin: '0 auto'
     },
     label:{
       flexGrow: 1, // Allows the child to grow and fill the available space
@@ -33,27 +33,27 @@ const Interface = () => {
   
     },
     heightDisplay: {
-      fontSize: '48px',
+      fontSize: '106px',
       letterSpacing: '5px', // to simulate the XXX.X appearance
     },
     button: {
-      width: '60px', // Adjusted size to match image
-      height: '60px',
+      width: '120px', // Adjusted size to match image
+      height: '120px',
       margin: '15px',
       fontSize: '24px', // Larger font size if necessary
       backgroundColor: '#333', // Match the dark theme in the image
       color: '#fff',
       border: 'none',
-      borderRadius: '10px',
+      borderRadius: '25px',
     },
     boldButton: {
-      width: '60px', // Adjusted size to match image
-      height: '80px',
-      fontSize: '30px', // Larger font size if necessary
+      width: '120px', // Adjusted size to match image
+      height: '180px',
+      fontSize: '50px', // Larger font size if necessary
       backgroundColor: '#9FDD94', // Match the dark theme in the image
       color: '#fff',
       border: 'none',
-      borderRadius: '10px',
+      borderRadius: '25px',
       fontWeight: 'bold', // Make the text bold
       display: 'flex',
       justifyContent: 'center',
@@ -61,23 +61,32 @@ const Interface = () => {
     },
     buttonContainer: {
       height:'100%',
+      width: '100%',
       display: 'flex',
+      justifyContent: 'space-evenly', // Align children with equal space between them
       flexDirection: 'column', // Align children in a column
-      flexGrow: 1, // Allows the child to grow and fill the available space
-      margin: '0 1%', // Optional: Adds margin to each side of the child element
+      flexGrow: 1,
+      borderRadius: '25px', // Allows the child to grow and fill the available space
+      // margin: '10px 0', // Optional: Adds margin to each side of the child element
   
     },
     buttonGroup: {
       height:'100%',
       display: 'flex',
+      justifyContent: 'space-evenly',
       flexDirection: 'row', // Align children in a column
+      flexGrow: 1,
+      alignItems: 'center',
+      borderRadius: '25px', // Allows the child to grow and fill the available space
+      // margin: '10px 0', // Optional: Adds margin to each side of the child element
     },
     activeButton: {
       backgroundColor: '#9FDD94', 
+      borderRadius: '25px',
     },
     icon: {
-      width: '60px',
-      height: '60px',
+      width: '100px',
+      height: '100px',
     },
     verticalLine: {
       borderLeft: '2px solid #A9FF9B', // Solid line, white color, 2 pixels thick
@@ -94,12 +103,12 @@ const Interface = () => {
       marginRight: '20px', // Space from the right container
     },
     score: {
-      fontSize: '48px',
+      fontSize: '106px',
       margin: '10px 0',
     },
     progressBar: {
       height: '20px',
-      borderRadius: '10px',
+      borderRadius: '25px',
       backgroundColor: '#555', // Make sure this is visible against the container background
       margin: '10px 0',
       width: '100%', // Set the width of the progress bar container to full width
@@ -107,7 +116,7 @@ const Interface = () => {
     },
     progress: {
       minHeight: '100%',
-      borderRadius: '10px',
+      borderRadius: '25px',
       transition: 'width 0.5s ease-in-out',
       backgroundColor: '#0f0', // Set the default color of the progress bar
     },
@@ -175,6 +184,38 @@ const Interface = () => {
       }
     });
   }, []);
+
+  // functions to handle the preset states
+  const [activeButton, setActiveButton] = useState(null);
+
+  // Function to handle button click
+  const handleButtonClick = (buttonNumber) => {
+    setActiveButton(buttonNumber); // Set the clicked button as active
+    // Apply preset logic here with applyPreset(presets[buttonNumber])
+    handlePreset(presets[buttonNumber]);
+  };
+
+  const [activePreset, setActivePreset] = useState(null);
+  const handlePreset = (preset) => {
+    applyPreset(preset);
+    setActivePreset(preset);
+  };
+
+  // Base style for all buttons
+  const baseButtonStyle = {
+    fontSize: '50px',
+    fontWeight: 'bold',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '22%',
+    height: '180px',
+    borderRadius: '25px'
+  };
+
+  const getButtonStyle = (preset) => ({
+    ...baseButtonStyle,
+    backgroundColor: activePreset === preset ? '#9FDD94' : '#444444', // Change background color if active
+  });
 
   // Function to process data and generate gradient
   const processPostureData = (data) => {
@@ -288,7 +329,8 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
   const presets = {
     sitting: 120.0,
     standing: 150.0,
-    elevated: 200.0
+    elevated1: 180.0,
+    elevated2: 200.0,
   };
 
   const applyPreset = (presetHeight) => {
@@ -324,45 +366,45 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
       {screenIndex === 0 && (
         <div style={styles.container}>
           <div>
-            <img src={logoImg} alt="Intellidesk Logo" style={{ width: '200px', height: 'auto' }} />
+            <img src={logoImg} alt="Intellidesk Logo" style={{ width: '286px', height: 'auto' }} />
             <div >{postureNudge && <IoIosBody style={{ color: 'red' }}/>}</div>
             <div style={styles.horizontalLine}></div>
-            <div>User 1</div>
-            <div>Eye-Screen Distance: {averageDistance.toFixed(1)}</div>
-            <div style={{ fontSize: '48px', marginBottom: '20px' }}>{height} CM</div>
+            <div style={{ fontSize: '50px', color: '#9FDD94'}}> User 1 </div>
+            <div style={{ fontSize: '30px'}}> Eye-Screen Distance: {averageDistance.toFixed(1)} cm</div>
+            <div style={{ fontSize: '80px', marginBottom: '20px', textAlign: 'right' }}>
+              <span style={{color: '#9FDD94'}}>{height}</span> CM
+            </div>
           </div>
           <div style={styles.buttonGroup}>
             <div style={styles.buttonContainer}>
-              <button onClick={handleIncrease} style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '60px',height: '80px', fontSize: '30px', borderRadius: '10px'}}>▲</button>
-              <button onClick={handleDecrease} style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '60px',height: '80px', fontSize: '30px', borderRadius: '10px'}}>▼</button>
+              <button onClick={handleIncrease} style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '120px',height: '180px', fontSize: '50px', borderRadius: '25px'}}>▲</button>
+              <button onClick={handleDecrease} style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '120px',height: '180px', fontSize: '50px', borderRadius: '25px'}}>▼</button>
             </div>
             <div style={styles.verticalLine}></div>
             <div style={styles.buttonContainer}>
               <button style={styles.boldButton}>M</button>
-              <button style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '60px',height: '80px', fontSize: '30px', borderRadius: '10px'}}>
-                <img src={unlockWhite} alt="Lock" style={{ width: '24px', height: '32px' }} />
+              <button style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '120px',height: '180px', fontSize: '50px', borderRadius: '25px'}}>
+                <img src={unlockWhite} alt="Lock" style={{ width: '36px', height: '50px' }} />
               </button>
             </div>
           </div>
           <div style={styles.buttonContainer}>
             <div style={styles.buttonGroup}>
-              <button style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '80%',height: '100%', borderRadius: '10px'}}>
-                <img src={chargeBlue} alt="Charge Icon" style={{ width: '60px', height: '60px' }} />
+              <button style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '75%',height: '180px', borderRadius: '25px'}}>
+                <img src={chargeGreen} alt="Charge Icon" style={styles.icon} />
               </button>
-              <button style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '80%',height: '80px', borderRadius: '10px'}}>
-                <img src={camBlue} alt="Cam Icon" style={{ width: '60px', height: '50px' }} />  
+              <button style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '75%',height: '180px', borderRadius: '25px'}}>
+                <img src={camGreen} alt="Cam Icon" style={{ width: '120px', height: '100px' }} />  
               </button> 
             </div>
-            <div className="controls">
-              <button onClick={() => applyPreset(presets.sitting)} style={{ fontSize: '30px',fontWeight:'bold',justifyContent: 'center',alignItems: 'center',width: '22%',height: '80px' }}>1
-              </button>
-              <button onClick={() => applyPreset(presets.standing)} style={{ fontSize: '30px',fontWeight:'bold',justifyContent: 'center',alignItems: 'center',width: '22%',height: '80px' }}>2
-              </button>
-              <button onClick={() => applyPreset(presets.elevated)} style={{ fontSize: '30px',fontWeight:'bold',justifyContent: 'center',alignItems: 'center',width: '22%',height: '80px' }}>3
-              </button>
-              <button onClick={() => applyPreset(presets.elevated)} style={{ fontSize: '30px',fontWeight:'bold',justifyContent: 'center',alignItems: 'center',width: '22%',height: '80px' }}>4
-              </button>
+            <div style={styles.buttonContainer}>
+            <div className="controls" style={styles.buttonGroup} >
+              <button onClick={() => handleButtonClick('sitting')} style={getButtonStyle(presets.sitting)}>1</button>
+              <button onClick={() => handleButtonClick('standing')} style={getButtonStyle(presets.standing)}>2</button>
+              <button onClick={() => handleButtonClick('elevated1')} style={getButtonStyle(presets.elevated1)}>3</button>
+              <button onClick={() => handleButtonClick('elevated2')} style={getButtonStyle(presets.elevated2)}>4</button>
             </div>
+          </div>
           </div>
           </div>
       )}
