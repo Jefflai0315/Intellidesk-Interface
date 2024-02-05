@@ -5,7 +5,7 @@ import { ref, set , query, limitToLast, onValue, startAt, endAt, orderByKey} fro
 import { IoIosBody } from "react-icons/io";
 import chargeGreen from '../imgs/charge_green.png';
 import camGreen from '../imgs/cam_green.png';
-import lockGreen from '../imgs/lock_green.png';
+import lockWhite from '../imgs/lock_white.png';
 import chargeGreenOff from '../imgs/charge_white.png';
 import camGreenOff from '../imgs/cam_white.png';
 import unlockWhite from '../imgs/unlock_white.png';
@@ -69,7 +69,6 @@ const Interface = () => {
       flexDirection: 'column', // Align children in a column
       flexGrow: 1,
       borderRadius: '25px', // Allows the child to grow and fill the available space
-      // margin: '10px 0', // Optional: Adds margin to each side of the child element
   
     },
     buttonGroup: {
@@ -80,7 +79,6 @@ const Interface = () => {
       flexGrow: 1,
       alignItems: 'center',
       borderRadius: '25px', // Allows the child to grow and fill the available space
-      // margin: '10px 0', // Optional: Adds margin to each side of the child element
     },
     activeButton: {
       backgroundColor: '#9FDD94', 
@@ -187,6 +185,8 @@ const Interface = () => {
     });
   }, []);
 
+  const [activeStates, setActiveStates] = useState({});
+
   // functions to handle the preset states
   const [activeButtons, setActiveButtons] = useState({});
 
@@ -197,23 +197,28 @@ const Interface = () => {
         ...prevState,
         [buttonKey]: !prevState[buttonKey]
     }));
+      
+    setActiveStates(prevActiveStates => ({
+      ...prevActiveStates,
+      [buttonKey]: !prevActiveStates[buttonKey]
+    }));
 
     // Call handlePreset only for specific buttons and if they are being activated
-    if (buttonKey !== 'offCam' && buttonKey !== 'offCharge' && !activeButtons[buttonKey]) {
+    if (buttonKey !== 'offCam' && buttonKey !== 'offCharge' && !activeButtons[buttonKey] && buttonKey !== 'lockButton' && buttonKey !== 'modeButton') {
         handlePreset(presets[buttonKey]);
     }
 };
 
-  const updateButtonAppearance = (buttonNumber) => {
-    setActiveButtons(buttonNumber); // Set the clicked button as active
-  };
+  // const updateButtonAppearance = (buttonNumber) => {
+  //   setActiveButtons(buttonNumber); // Set the clicked button as active
+  // };
 
-  // Function to handle preset application
-  const handlePresetApplication = (buttonNumber) => {
-    if (buttonNumber !== 'offCam' && buttonNumber !== 'offCharge') {
-      handlePreset(presets[buttonNumber]);
-    }
-  };
+  // // Function to handle preset application
+  // const handlePresetApplication = (buttonNumber) => {
+  //   if (buttonNumber !== 'offCam' && buttonNumber !== 'offCharge') {
+  //     handlePreset(presets[buttonNumber]);
+  //   }
+  // };
 
   const [activePreset, setActivePreset] = useState(null);
   const handlePreset = (preset) => {
@@ -250,6 +255,11 @@ const Interface = () => {
   const getButtonStyleC = (buttonKey) => ({
     ...baseButtonStyleC,
     backgroundColor: activeButtons[buttonKey] ? '#9FDD94' : '#444444', // Change background color if active
+  });
+
+  const getButtonStyleBold = (buttonKey) => ({
+    ...styles.boldButton,
+    backgroundColor: activeStates[buttonKey] ? '#9FDD94' : '#444444', // Change background color if active
   });
 
   // Function to process data and generate gradient
@@ -406,7 +416,7 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
             <div style={styles.horizontalLine}></div>
             <div style={{ fontSize: '50px', color: '#9FDD94'}}> User 1 </div>
             <div style={{ fontSize: '30px'}}> Eye-Screen Distance: {averageDistance.toFixed(1)} cm</div>
-            <div style={{ fontSize: '80px', marginBottom: '20px', textAlign: 'right' }}>
+            <div style={{ fontSize: '85px', textAlign: 'right' }}>
               <span style={{color: '#9FDD94'}}>{height}</span> CM
             </div>
           </div>
@@ -417,9 +427,28 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
             </div>
             <div style={styles.verticalLine}></div>
             <div style={styles.buttonContainer}>
-              <button style={styles.boldButton}>M</button>
-              <button style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '120px',height: '180px', fontSize: '50px', borderRadius: '25px'}}>
-                <img src={unlockWhite} alt="Lock" style={{ width: '36px', height: '50px' }} />
+              <button 
+                onClick={() => handleButtonClick('modeButton')}
+                style={getButtonStyleBold('modeButton')}>
+                M
+              </button>
+              <button onClick={() => handleButtonClick('lockButton')}
+                style={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  width: '120px',
+                  height: '180px',
+                  fontSize: '50px',
+                  borderRadius: '25px',
+                  backgroundColor: activeStates['lockButton'] ? '#9FDD94' : '#444444', // Change to your default color
+                }}
+              >
+                <img
+                  src={activeStates['lockButton'] ? lockWhite : unlockWhite} // Change 'unlockActive' to the active state icon
+                  alt="Lock"
+                  style={{ width: '36px', height: '50px' }}
+                />
               </button>
             </div>
           </div>
