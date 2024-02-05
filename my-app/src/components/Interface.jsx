@@ -6,6 +6,8 @@ import { IoIosBody } from "react-icons/io";
 import chargeGreen from '../imgs/charge_green.png';
 import camGreen from '../imgs/cam_green.png';
 import lockGreen from '../imgs/lock_green.png';
+import chargeGreenOff from '../imgs/charge_white.png';
+import camGreenOff from '../imgs/cam_white.png';
 import unlockWhite from '../imgs/unlock_white.png';
 import logoImg from '../imgs/logo@720x.png';
 import { useSwipeable } from 'react-swipeable';
@@ -186,13 +188,31 @@ const Interface = () => {
   }, []);
 
   // functions to handle the preset states
-  const [activeButton, setActiveButton] = useState(null);
+  const [activeButtons, setActiveButtons] = useState({});
 
   // Function to handle button click
-  const handleButtonClick = (buttonNumber) => {
-    setActiveButton(buttonNumber); // Set the clicked button as active
-    // Apply preset logic here with applyPreset(presets[buttonNumber])
-    handlePreset(presets[buttonNumber]);
+  const handleButtonClick = (buttonKey) => {
+    // Toggle the button's active state
+    setActiveButtons(prevState => ({
+        ...prevState,
+        [buttonKey]: !prevState[buttonKey]
+    }));
+
+    // Call handlePreset only for specific buttons and if they are being activated
+    if (buttonKey !== 'offCam' && buttonKey !== 'offCharge' && !activeButtons[buttonKey]) {
+        handlePreset(presets[buttonKey]);
+    }
+};
+
+  const updateButtonAppearance = (buttonNumber) => {
+    setActiveButtons(buttonNumber); // Set the clicked button as active
+  };
+
+  // Function to handle preset application
+  const handlePresetApplication = (buttonNumber) => {
+    if (buttonNumber !== 'offCam' && buttonNumber !== 'offCharge') {
+      handlePreset(presets[buttonNumber]);
+    }
   };
 
   const [activePreset, setActivePreset] = useState(null);
@@ -201,8 +221,8 @@ const Interface = () => {
     setActivePreset(preset);
   };
 
-  // Base style for all buttons
-  const baseButtonStyle = {
+  // Base style for preset buttons
+  const baseButtonStyleP = {
     fontSize: '50px',
     fontWeight: 'bold',
     justifyContent: 'center',
@@ -212,9 +232,24 @@ const Interface = () => {
     borderRadius: '25px'
   };
 
-  const getButtonStyle = (preset) => ({
-    ...baseButtonStyle,
+  // Base style for charge/cam buttons
+  const baseButtonStyleC = {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '75%',
+    height: '180px', 
+    borderRadius: '25px'
+  };
+
+  const getButtonStyleP = (preset) => ({
+    ...baseButtonStyleP,
     backgroundColor: activePreset === preset ? '#9FDD94' : '#444444', // Change background color if active
+  });
+
+  const getButtonStyleC = (buttonKey) => ({
+    ...baseButtonStyleC,
+    backgroundColor: activeButtons[buttonKey] ? '#9FDD94' : '#444444', // Change background color if active
   });
 
   // Function to process data and generate gradient
@@ -390,19 +425,27 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
           </div>
           <div style={styles.buttonContainer}>
             <div style={styles.buttonGroup}>
-              <button style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '75%',height: '180px', borderRadius: '25px'}}>
-                <img src={chargeGreen} alt="Charge Icon" style={styles.icon} />
+              <button onClick={() => handleButtonClick('offCharge')} style={getButtonStyleC('offCharge')}>
+                {
+                  activeButtons['offCharge']
+                  ? <img src={chargeGreenOff} alt="Charge Icon Off" style={styles.icon} />
+                  : <img src={chargeGreen} alt="Charge Icon" style={styles.icon} />
+                }
               </button>
-              <button style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '75%',height: '180px', borderRadius: '25px'}}>
-                <img src={camGreen} alt="Cam Icon" style={{ width: '120px', height: '100px' }} />  
-              </button> 
+              <button onClick={() => handleButtonClick('offCam')} style={getButtonStyleC('offCam')}>
+                {
+                  activeButtons['offCam']
+                  ? <img src={camGreenOff} alt="Cam Icon Off" style={{ width: '120px', height: '100px' }} />
+                  : <img src={camGreen} alt="Cam Icon" style={{ width: '120px', height: '100px' }} />
+                }
+              </button>
             </div>
             <div style={styles.buttonContainer}>
             <div className="controls" style={styles.buttonGroup} >
-              <button onClick={() => handleButtonClick('sitting')} style={getButtonStyle(presets.sitting)}>1</button>
-              <button onClick={() => handleButtonClick('standing')} style={getButtonStyle(presets.standing)}>2</button>
-              <button onClick={() => handleButtonClick('elevated1')} style={getButtonStyle(presets.elevated1)}>3</button>
-              <button onClick={() => handleButtonClick('elevated2')} style={getButtonStyle(presets.elevated2)}>4</button>
+              <button onClick={() => handleButtonClick('sitting')} style={getButtonStyleP(presets.sitting)}>1</button>
+              <button onClick={() => handleButtonClick('standing')} style={getButtonStyleP(presets.standing)}>2</button>
+              <button onClick={() => handleButtonClick('elevated1')} style={getButtonStyleP(presets.elevated1)}>3</button>
+              <button onClick={() => handleButtonClick('elevated2')} style={getButtonStyleP(presets.elevated2)}>4</button>
             </div>
           </div>
           </div>
