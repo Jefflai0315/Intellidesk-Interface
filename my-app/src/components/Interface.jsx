@@ -16,7 +16,7 @@ import { useSwipeable } from 'react-swipeable';
 const totalPages = 2; // Set this to the total number of pages you have
 
 // Clock component
-const Clock = () => {
+const Clock = ({ style }) => {
   const [time, setTime] = useState(new Date());
 
   useEffect(() => {
@@ -30,16 +30,10 @@ const Clock = () => {
   }, []);
 
   const clockStyle = {
-    position: 'flex', // Position the clock absolutely within the relative container
-    top: '5px', // Adjust distance from the top
-    left: '40px', // Adjust distance from the left
-    fontSize: '50px',
+    fontSize: '60px',
     color: '#9FDD94', // Choose a color that fits your UI's theme
-    textAlign: 'center',
     fontFamily: 'Open Sans, bold, sans-serif',
-    padding: '20px',
-    margin: '0 auto', // Center the clock if it's not already in a flex container
-    // Add more styles as needed
+    ...style 
   };
 
   return (
@@ -65,22 +59,6 @@ const Interface = () => {
       height: '400px', // Set the height of the container
       overflow: 'auto', // Optional: add scrolling to the container
       margin: '0 auto'
-    },
-    clockContainer: {
-      display: 'flex',
-      flexDirection: 'row', // Align children horizontally
-      justifyContent: 'flex-start', // Align children to the start of the main-axis
-      alignItems: 'flex-start', // Align children to the start of the cross-axis
-      backgroundColor: '#000', // Your existing styles
-      color: '#fff',
-      padding: '20px',
-      fontFamily: 'Open Sans, sans-serif',
-      gap: '2%',
-      width: '1280px',
-      height: '400px',
-      overflow: 'auto',
-      margin: '0 auto',
-      position: 'relative', // Add this if you plan to use absolute positioning for any child
     },
     label:{
       flexGrow: 1, // Allows the child to grow and fill the available space
@@ -124,11 +102,21 @@ const Interface = () => {
       borderRadius: '25px', // Allows the child to grow and fill the available space
       // padding: '20px', // Optional: Add padding to the container
     },
+    buttonContainerPg2: {
+      height:'100%',
+      width: '95%',
+      display: 'flex',
+      justifyContent: 'space-evenly', // Align children with equal space between them
+      flexDirection: 'column', // Align children in a column
+      flexGrow: 1,
+      borderRadius: '25px', // Allows the child to grow and fill the available space
+      // padding: '20px', // Optional: Add padding to the container
+    },
     buttonGroup: {
       height:'100%',
       display: 'flex',
       justifyContent: 'space-evenly',
-      flexDirection: 'row', // Align children in a column
+      // flexDirection: 'row', // Align children in a column
       flexGrow: 1,
       alignItems: 'center',
       borderRadius: '25px', // Allows the child to grow and fill the available space
@@ -162,19 +150,30 @@ const Interface = () => {
 
     //Pg 2 styles
     groupContainer: {
+      
       // Other styles for the container
     },
     stackContainer: {
       display: 'flex',
-      flexDirection: 'column', // Stack children vertically
+      // flexDirection: 'row', // Stack children vertically
       alignItems: 'center', // Align children in the center
+      justifyContent: 'space-between',
+      width: '100%'
     },
-    progressBar: {
+    progressBarS: {
       height: '20px',
       borderRadius: '25px',
       backgroundColor: '#555', // Make sure this is visible against the container background
       margin: '10px 0',
       width: '400px', // Set the width of the progress bar container to full width
+      overflow: 'hidden', // Ensures the inner progress doesn't overflow
+    },
+    progressBarL: {
+      height: '20px',
+      borderRadius: '25px',
+      backgroundColor: '#555', // Make sure this is visible against the container background
+      margin: '10px 0',
+      width: '845px', // Set the width of the progress bar container to full width
       overflow: 'hidden', // Ensures the inner progress doesn't overflow
     },
     progress: {
@@ -200,10 +199,6 @@ const Interface = () => {
   // const handleSwipedRight = () => setScreenIndex((prev) => (prev > 0 ? prev - 1 : 0));
 
   const swipeHandlers = useSwipeable({
-    // onSwipedLeft: () => setScreenIndex(1),
-    // onSwipedRight: () => setScreenIndex(0),
-    // preventDefaultTouchmoveEvent: true,
-    // trackMouse: true
     onSwipedLeft: () => setScreenIndex((prevIndex) => (prevIndex + 1) % totalPages),
     onSwipedRight: () => setScreenIndex((prevIndex) => (prevIndex - 1 + totalPages) % totalPages),
     preventDefaultTouchmoveEvent: true,
@@ -530,7 +525,10 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
             <div >{postureNudge && <IoIosBody style={{ color: '#EE5757' }}/>}</div>
             <div style={styles.horizontalLine}></div>
             <div style={{ fontSize: '50px', color: '#9FDD94'}}> User 1 </div>
-            <div style={{ fontSize: '30px'}}> Eye-Screen Distance: {averageDistance.toFixed(1)} cm</div>
+            {/* <div style={{ fontSize: '30px', color: '#FFFFFF'}}> 
+              Screen-Eye Distance: <span style={{color: '#9FDD94'}}>{averageDistance.toFixed(1)}</span> cm
+            </div> */}
+            <div style={{ fontSize: '30px', color: '#FFFFFF', paddingTop: '10px'}}>Table Height:</div>
             <div style={{ fontSize: '85px', textAlign: 'right' }}>
               <span style={{color: '#9FDD94'}}>{height}</span> CM
             </div>
@@ -598,21 +596,15 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
       {screenIndex === 1 && (
         // Your second screen JSX
       <div style={styles.container}>
-        <div>
-            <Clock /> 
+        <div style={{ position: 'relative'}}>
+            <Clock style={{ position: 'absolute', bottom: '195px', left: '0' }}/> 
             <img src={logoImg} alt="Intellidesk Logo" style={{ width: '286px', height: 'auto' }} />
             <div >{postureNudge && <IoIosBody style={{ color: 'red' }}/>}</div>
             <div style={styles.horizontalLine}></div>
             <div style={{ fontSize: '50px', color: '#9FDD94'}}> User 1 </div>
-            {/* <div style={{ fontSize: '30px'}}> Posture Score</div>
-            <div style={{ fontSize: '85px', textAlign: 'right' }}>
-              <span style={{color: '#9FDD94'}}>{93}</span>
-              <span style={{fontSize: '45px'}}>/100</span>
-            </div> */}
           </div>
 
         {/* <div style={styles.buttonContainer}>
-          
         <div style={styles.label}>{isStanding ? 'Stand Time' : 'Sit Time'}</div>
         <div style={styles.progressBar}>
               <div style={{ ...styles.progress, width: `${sitStandProgress}%`, backgroundColor: isStanding ? 'orange' : 'blue' }}></div>
@@ -620,38 +612,38 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
         </div> */}
         <div style={styles.verticalLine}></div>
         <div style={styles.groupContainer}>
-          <div style={{ ...styles.buttonContainer, padding: '20px' }}>
-            <div style ={{fontSize: '30px', color: '#FFFFFF'}}>Posture Score</div>
-            <div style={{fontSize: '85px', textAlign: 'right', paddingRight: '40px'}}>
-              <span style={{color: '#9FDD94'}}>{93}</span>
-              <span style={{fontSize: '45px'}}>/100</span>
-            </div>
+          <div style={{ ...styles.buttonContainerPg2, padding: '15px', marginBottom: '0' }}>
+              <div style={styles.label}>Sit/Stand</div>
+              <div style={styles.progressBarL}>
+                <div style={{ ...styles.progress, width: '100%', background: SitStandGradient }}></div>
+              </div>
+              <div style={styles.slider}> {/* Replace with actual slider component */}</div>
+            </div>        
+        <div style={styles.stackContainer}>
+          <div style={{ ...styles.buttonContainer, padding: '20px', marginTop: '0', paddingBottom: '20px' }}>
+          <div style={styles.label}>Posture</div>
+          <div style={{fontSize: '60px', textAlign: 'right', paddingRight: '40px'}}>
+            <span style={{color: '#9FDD94'}}>{93}</span>
+            <span style={{fontSize: '35px'}}>/100</span>
           </div>
-          <div style={{ ...styles.buttonContainer, padding: '20px' }}>
-            <div style={styles.label}>Posture</div>
-            <div style={styles.progressBar}>
-              <div style={{ ...styles.progress, width: '100%', background: PostureGradient }}></div>
+          <div style={styles.progressBarS}>
+            <div style={{ ...styles.progress, width: '100%', background: PostureGradient }}></div>
+          </div>
+          <div style={styles.slider}> {/* Replace with actual slider component */}</div>
+        </div>
+          <div style={{ ...styles.buttonContainer, padding: '15px', marginTop: '0'  }}>
+            <div style={styles.label}>Screen-Eye Distance</div>
+            <div style={{ fontSize: '60px', color: '#FFFFFF', textAlign: 'right', paddingRight: '30px'}}> 
+              <span style={{color: '#9FDD94'}}>{averageDistance.toFixed(1)}</span>
+              <span style={{fontSize: '35px'}}>cm</span>
+            </div>
+            <div style={styles.progressBarS}>
+              <div style={{ ...styles.progress, width: '100%', background: EyeScreenGradient }}></div>
             </div>
             <div style={styles.slider}> {/* Replace with actual slider component */}</div>
           </div>
         </div>
-        <div style={styles.groupContainer}>
-          <div style={styles.stackContainer}>
-            <div style={{ ...styles.buttonContainer, padding: '15px', marginBottom: '35px' }}>
-              <div style={styles.label}>Sit/Stand</div>
-              <div style={styles.progressBar}>
-                <div style={{ ...styles.progress, width: '100%', background: SitStandGradient }}></div>
-              </div>
-              <div style={styles.slider}> {/* Replace with actual slider component */}</div>
-            </div>
-            <div style={{ ...styles.buttonContainer, padding: '15px', marginTop: '35px'  }}>
-              <div style={styles.label}>Screen-Eye Distance</div>
-              <div style={styles.progressBar}>
-                <div style={{ ...styles.progress, width: '100%', background: EyeScreenGradient }}></div>
-              </div>
-              <div style={styles.slider}> {/* Replace with actual slider component */}</div>
-            </div>
-          </div>
+        {/* </div> */}
         </div>
       </div>
       )}
