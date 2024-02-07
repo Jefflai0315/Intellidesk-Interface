@@ -12,6 +12,43 @@ import unlockWhite from '../imgs/unlock_white.png';
 import logoImg from '../imgs/logo@720x.png';
 import { useSwipeable } from 'react-swipeable';
 
+// Right before the Interface component function
+const totalPages = 2; // Set this to the total number of pages you have
+
+// Clock component
+const Clock = () => {
+  const [time, setTime] = useState(new Date());
+
+  useEffect(() => {
+    const timerId = setInterval(() => {
+      setTime(new Date());
+    }, 1000);
+
+    return () => {
+      clearInterval(timerId);
+    };
+  }, []);
+
+  const clockStyle = {
+    position: 'flex', // Position the clock absolutely within the relative container
+    top: '5px', // Adjust distance from the top
+    left: '40px', // Adjust distance from the left
+    fontSize: '50px',
+    color: '#9FDD94', // Choose a color that fits your UI's theme
+    textAlign: 'center',
+    fontFamily: 'Open Sans, bold, sans-serif',
+    padding: '20px',
+    margin: '0 auto', // Center the clock if it's not already in a flex container
+    // Add more styles as needed
+  };
+
+  return (
+    <div style={clockStyle}>
+      {time.toLocaleTimeString('en-GB', { hour12: false })}
+    </div>
+  );
+};
+
 const Interface = () => {
 
   const styles = {
@@ -29,10 +66,26 @@ const Interface = () => {
       overflow: 'auto', // Optional: add scrolling to the container
       margin: '0 auto'
     },
+    clockContainer: {
+      display: 'flex',
+      flexDirection: 'row', // Align children horizontally
+      justifyContent: 'flex-start', // Align children to the start of the main-axis
+      alignItems: 'flex-start', // Align children to the start of the cross-axis
+      backgroundColor: '#000', // Your existing styles
+      color: '#fff',
+      padding: '20px',
+      fontFamily: 'Open Sans, sans-serif',
+      gap: '2%',
+      width: '1280px',
+      height: '400px',
+      overflow: 'auto',
+      margin: '0 auto',
+      position: 'relative', // Add this if you plan to use absolute positioning for any child
+    },
     label:{
       flexGrow: 1, // Allows the child to grow and fill the available space
       margin: '0 1%', // Optional: Adds margin to each side of the child element
-  
+      fontSize: '30px', // Optional: Adjust the font size of the label
     },
     heightDisplay: {
       fontSize: '106px',
@@ -69,7 +122,7 @@ const Interface = () => {
       flexDirection: 'column', // Align children in a column
       flexGrow: 1,
       borderRadius: '25px', // Allows the child to grow and fill the available space
-  
+      // padding: '20px', // Optional: Add padding to the container
     },
     buttonGroup: {
       height:'100%',
@@ -106,12 +159,22 @@ const Interface = () => {
       fontSize: '106px',
       margin: '10px 0',
     },
+
+    //Pg 2 styles
+    groupContainer: {
+      // Other styles for the container
+    },
+    stackContainer: {
+      display: 'flex',
+      flexDirection: 'column', // Stack children vertically
+      alignItems: 'center', // Align children in the center
+    },
     progressBar: {
       height: '20px',
       borderRadius: '25px',
       backgroundColor: '#555', // Make sure this is visible against the container background
       margin: '10px 0',
-      width: '100%', // Set the width of the progress bar container to full width
+      width: '400px', // Set the width of the progress bar container to full width
       overflow: 'hidden', // Ensures the inner progress doesn't overflow
     },
     progress: {
@@ -122,7 +185,14 @@ const Interface = () => {
     },
     slider: {
       // Slider styling will depend on the library or method you're using
-    }
+    },
+    // Define your gradients for the progress bars here
+    SitStandGradient: 'linear-gradient(to right, red, yellow, green)',
+    EyeScreenGradient: 'linear-gradient(to right, green, yellow, red)',
+  };
+
+  const handlePageSelect = (pageIndex) => {
+    setScreenIndex(pageIndex);
   };
 
   // Handler functions for swipe actions
@@ -130,8 +200,12 @@ const Interface = () => {
   // const handleSwipedRight = () => setScreenIndex((prev) => (prev > 0 ? prev - 1 : 0));
 
   const swipeHandlers = useSwipeable({
-    onSwipedLeft: () => setScreenIndex(1),
-    onSwipedRight: () => setScreenIndex(0),
+    // onSwipedLeft: () => setScreenIndex(1),
+    // onSwipedRight: () => setScreenIndex(0),
+    // preventDefaultTouchmoveEvent: true,
+    // trackMouse: true
+    onSwipedLeft: () => setScreenIndex((prevIndex) => (prevIndex + 1) % totalPages),
+    onSwipedRight: () => setScreenIndex((prevIndex) => (prevIndex - 1 + totalPages) % totalPages),
     preventDefaultTouchmoveEvent: true,
     trackMouse: true
   });
@@ -262,6 +336,44 @@ const Interface = () => {
     backgroundColor: activeStates[buttonKey] ? '#9FDD94' : '#444444', // Change background color if active
   });
 
+  // Dot component
+  const Dot = ({ isActive, onClick }) => (
+    <span
+      style={{
+        padding: '5px',
+        marginRight: '5px',
+        cursor: 'pointer',
+        borderRadius: '50%',
+        backgroundColor: isActive ? '#FFFFFF' : '#BBBBBB',
+      }}
+      onClick={onClick}
+    />
+  );
+
+  // PageIndicator component
+  const PageIndicator = ({ totalPages, currentPage, onPageSelect }) => (
+    <div style={{ display: 'flex', justifyContent: 'center' }}>
+      {Array.from({ length: totalPages }, (_, index) => (
+        <Dot
+          key={index}
+          isActive={index === currentPage}
+          onClick={() => onPageSelect(index)}
+        />
+      ))}
+    </div>
+  );
+
+  // Define the container for the page indicator
+  const pageIndicatorContainerStyle = {
+    position: 'absolute', // Position it relative to the Interface component
+    bottom: '495px', // Place it at the bottom with a margin of 10px
+    left: '50%', // Center align the container
+    transform: 'translateX(-50%)', // This ensures it's centered regardless of the width
+    display: 'flex',
+    justifyContent: 'center',
+    width: '100%', // Take the full width to center the content properly
+  };
+
   // Function to process data and generate gradient
   const processPostureData = (data) => {
     let totalDuration = Object.keys(data).length;
@@ -282,7 +394,7 @@ const Interface = () => {
     setAverageScore(Math.round(averageScore))
 
     Object.entries(data).forEach(([time, { PostureQuality }], index) => {
-      const color = PostureQuality === 'good' ? 'green' : PostureQuality === 'perfect' ? 'blue' : 'red';
+      const color = PostureQuality === 'good' ? '#F4B54C' : PostureQuality === 'perfect' ? '#78D06A' : '#EE5757';
       const start = (index / totalDuration) * 100;
       const end = ((index + 1) / totalDuration) * 100;
   
@@ -290,7 +402,7 @@ const Interface = () => {
     });
 
     Object.entries(data).forEach(([time, { PostureQuality }], index) => {
-      const color = PostureQuality === 'good' ? 'green' : PostureQuality === 'perfect' ? 'blue' : 'red';
+      const color = PostureQuality === 'good' ? '#F4B54C' : PostureQuality === 'perfect' ? '#78D06A' : '#EE5757';
       const start = (index / totalDuration) * 100;
       const end = ((index + 1) / totalDuration) * 100;
   
@@ -321,7 +433,7 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
     let gradientArray = [];
 
     Object.entries(data).forEach(([time, { PostureMode }], index) => {
-      const color = PostureMode === 'sitting' ? 'red' : 'blue';
+      const color = PostureMode === 'sitting' ? '#EE5757' : '#78D06A';
       const start = (index / totalDuration) * 100;
       const end = ((index + 1) / totalDuration) * 100;
   
@@ -354,7 +466,7 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
 
     Object.entries(data).forEach(([time, { Distance }], index) => {
       // console.log(Distance)
-      const color = Distance <  '90' ? 'red' : Distance > '180' ? 'yellow' : 'green';
+      const color = Distance <  '90' ? '#EE5757' : Distance > '180' ? '#F4B54C' : '#78D06A';
       const start = (index / totalDuration) * 100;
       const end = ((index + 1) / totalDuration) * 100;
   
@@ -408,11 +520,14 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
   return (
     <div {...swipeHandlers} >
       {/* Render the screen based on the current index */}
+      <div style={pageIndicatorContainerStyle}>
+        <PageIndicator totalPages={totalPages} currentPage={screenIndex} onPageSelect={handlePageSelect} />
+      </div>
       {screenIndex === 0 && (
         <div style={styles.container}>
           <div>
             <img src={logoImg} alt="Intellidesk Logo" style={{ width: '286px', height: 'auto' }} />
-            <div >{postureNudge && <IoIosBody style={{ color: 'red' }}/>}</div>
+            <div >{postureNudge && <IoIosBody style={{ color: '#EE5757' }}/>}</div>
             <div style={styles.horizontalLine}></div>
             <div style={{ fontSize: '50px', color: '#9FDD94'}}> User 1 </div>
             <div style={{ fontSize: '30px'}}> Eye-Screen Distance: {averageDistance.toFixed(1)} cm</div>
@@ -483,53 +598,63 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
       {screenIndex === 1 && (
         // Your second screen JSX
       <div style={styles.container}>
-        <div >
-          <div >Intellidesk</div>
-          <div style={styles.label}>Posture Score</div>
-          <div style={styles.score}>{averageScore}/100</div>
-        </div>
-    
+        <div>
+            <Clock /> 
+            <img src={logoImg} alt="Intellidesk Logo" style={{ width: '286px', height: 'auto' }} />
+            <div >{postureNudge && <IoIosBody style={{ color: 'red' }}/>}</div>
+            <div style={styles.horizontalLine}></div>
+            <div style={{ fontSize: '50px', color: '#9FDD94'}}> User 1 </div>
+            {/* <div style={{ fontSize: '30px'}}> Posture Score</div>
+            <div style={{ fontSize: '85px', textAlign: 'right' }}>
+              <span style={{color: '#9FDD94'}}>{93}</span>
+              <span style={{fontSize: '45px'}}>/100</span>
+            </div> */}
+          </div>
+
         {/* <div style={styles.buttonContainer}>
           
         <div style={styles.label}>{isStanding ? 'Stand Time' : 'Sit Time'}</div>
         <div style={styles.progressBar}>
               <div style={{ ...styles.progress, width: `${sitStandProgress}%`, backgroundColor: isStanding ? 'orange' : 'blue' }}></div>
             </div>
-          
         </div> */}
-        <div style={styles.buttonContainer}>
-          <div style={styles.label}>Posture</div>
-          <div style={styles.progressBar}>
-            <div style={{ ...styles.progress,width: '100%', background: PostureGradient }}></div>
+        <div style={styles.verticalLine}></div>
+        <div style={styles.groupContainer}>
+          <div style={{ ...styles.buttonContainer, padding: '20px' }}>
+            <div style ={{fontSize: '30px', color: '#FFFFFF'}}>Posture Score</div>
+            <div style={{fontSize: '85px', textAlign: 'right', paddingRight: '40px'}}>
+              <span style={{color: '#9FDD94'}}>{93}</span>
+              <span style={{fontSize: '45px'}}>/100</span>
+            </div>
           </div>
-          {/* This would be an interactive slider component */}
-          <div style={styles.slider}> {/* You will need to replace this with an actual slider component */}
-            {/* The slider thumb position would represent the screenEyeDistance */}
-          </div>
-        </div>
-        <div style={styles.buttonContainer}>
-          <div style={styles.label}>Sit/Stand</div>
-          <div style={styles.progressBar}>
-            <div style={{ ...styles.progress,width: '100%', background: SitStandGradient }}></div>
-          </div>
-          {/* This would be an interactive slider component */}
-          <div style={styles.slider}> {/* You will need to replace this with an actual slider component */}
-            {/* The slider thumb position would represent the screenEyeDistance */}
+          <div style={{ ...styles.buttonContainer, padding: '20px' }}>
+            <div style={styles.label}>Posture</div>
+            <div style={styles.progressBar}>
+              <div style={{ ...styles.progress, width: '100%', background: PostureGradient }}></div>
+            </div>
+            <div style={styles.slider}> {/* Replace with actual slider component */}</div>
           </div>
         </div>
-        <div style={styles.buttonContainer}>
-          <div style={styles.label}>Eye-Screen Distance</div>
-          <div style={styles.progressBar}>
-            <div style={{ ...styles.progress,width: '100%', background: EyeScreenGradient }}></div>
-          </div>
-          {/* This would be an interactive slider component */}
-          <div style={styles.slider}> {/* You will need to replace this with an actual slider component */}
-            {/* The slider thumb position would represent the screenEyeDistance */}
+        <div style={styles.groupContainer}>
+          <div style={styles.stackContainer}>
+            <div style={{ ...styles.buttonContainer, padding: '15px', marginBottom: '35px' }}>
+              <div style={styles.label}>Sit/Stand</div>
+              <div style={styles.progressBar}>
+                <div style={{ ...styles.progress, width: '100%', background: SitStandGradient }}></div>
+              </div>
+              <div style={styles.slider}> {/* Replace with actual slider component */}</div>
+            </div>
+            <div style={{ ...styles.buttonContainer, padding: '15px', marginTop: '35px'  }}>
+              <div style={styles.label}>Screen-Eye Distance</div>
+              <div style={styles.progressBar}>
+                <div style={{ ...styles.progress, width: '100%', background: EyeScreenGradient }}></div>
+              </div>
+              <div style={styles.slider}> {/* Replace with actual slider component */}</div>
+            </div>
           </div>
         </div>
       </div>
       )}
-
     </div>
   );
 }
