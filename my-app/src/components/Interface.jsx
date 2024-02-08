@@ -15,6 +15,9 @@ import { useSwipeable } from 'react-swipeable';
 // Right before the Interface component function
 const totalPages = 2; // Set this to the total number of pages you have
 
+// Duration of the analysis, last 1 hour, 3 hour, etc
+const duration = 60 * 60 * 1000000;
+
 // Clock component
 const Clock = ({ style }) => {
   const [time, setTime] = useState(new Date());
@@ -221,11 +224,19 @@ const Interface = () => {
   const [PostureGradient, setPostureGradient] = useState('');
   const [EyeScreenGradient, setEyeScreenGradient] = useState('');
   const [SitStandGradient, setSitStandGradient] = useState('');
-  const [averageScore, setAverageScore] = useState('');
+  const [averageScore, setAverageScore] = useState(0);
   const [postureNudge,setPostureNudge] = useState(false);
+  const [current_user, setCurrentUser] = useState('JARVIS');
+
+  // TODO: Retrieve active user from DB
+  useEffect(() => {
+    setCurrentUser("Jeff");
+    console.log(current_user);
+  }, []);
+
 
   useEffect(() => {
-    const postureRef = query(ref(database, 'Controls/PostureNudge'));
+    const postureRef = query(ref(database, `${current_user}/Controls/PostureNudge`));
     onValue(postureRef, (snapshot) => {
       const data = snapshot.val();
       console.log(data);
@@ -237,21 +248,25 @@ const Interface = () => {
       }
     });
   }, []);
+
+  
   // Firebase data fetching and processing for posture
   useEffect(() => {
     const currentTime = Date.now();
-    const oneHourAgo = currentTime - 60 * 60 * 1000; 
-    const postureRef = query(ref(database, 'Posture') ,orderByKey(), // Assuming 'unixtimestamp' is your key
-    startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a number
-      );
-    onValue(postureRef, (snapshot) => {
-      const data = snapshot.val();
-      // console.log(data);
-      if (data) {
-        const processedData = processPostureData(data);
-        setPostureGradient(createGradient(processedData));
-      }
-    });
+    const oneHourAgo = currentTime - duration; 
+    const postureRef = query(
+      ref(database, `${current_user}/Posture`) 
+      ,orderByKey(), // Assuming 'unixtimestamp' is your key
+      startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a number
+        );
+      onValue(postureRef, (snapshot) => {
+        const data = snapshot.val();
+        // console.log(data);
+        if (data) {
+          const processedData = processPostureData(data);
+          setPostureGradient(createGradient(processedData));
+        }
+      });
   }, []);
 
   const [activeStates, setActiveStates] = useState({});
@@ -409,8 +424,8 @@ const Interface = () => {
 
   useEffect(() => {
     const currentTime = Date.now();
-    const oneHourAgo = currentTime - 600* 60 * 60 * 1000; 
-    const postureRef = query(ref(database, 'Posture'), orderByKey(), // Assuming 'unixtimestamp' is your key
+    const oneHourAgo = currentTime - duration; 
+    const postureRef = query(ref(database, `${current_user}/Posture`), orderByKey(), // Assuming 'unixtimestamp' is your key
 startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a number
   );
     onValue(postureRef, (snapshot) => {
@@ -440,8 +455,8 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
 
   useEffect(() => {
     const currentTime = Date.now();
-    const oneHourAgo = currentTime - 60 * 60 * 1000; 
-    const eyeScreenDistanceRef = query(ref(database, 'EyeScreenDistance'), orderByKey(), // Assuming 'unixtimestamp' is your key
+    const oneHourAgo = currentTime - duration; 
+    const eyeScreenDistanceRef = query(ref(database, `${current_user}/EyeScreenDistance`), orderByKey(), // Assuming 'unixtimestamp' is your key
     startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a number
       );
     onValue(eyeScreenDistanceRef, (snapshot) => {
@@ -456,19 +471,29 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
 
   // Function to process data and generate gradient
   const processEyeScreenDistanceData = (data) => {
-    let totalDuration = Object.keys(data).length;
+    let totalDuration = Object.keys(data).length; // Number of data points
     let gradientArray = [];
-
+    let totalDistance = 0; // Variable to sum up all distances
+  
     Object.entries(data).forEach(([time, { Distance }], index) => {
-      // console.log(Distance)
-      const color = Distance <  '90' ? '#EE5757' : Distance > '180' ? '#F4B54C' : '#78D06A';
+      // Convert Distance to a number, assuming it's stored as a string
+      const distanceNum = parseFloat(Distance);
+  
+      // Sum up all distances
+      totalDistance += distanceNum;
+  
+      const color = distanceNum < 90 ? '#EE5757' : distanceNum > 180 ? '#F4B54C' : '#78D06A';
       const start = (index / totalDuration) * 100;
       const end = ((index + 1) / totalDuration) * 100;
   
       gradientArray.push({ color, start, end });
     });
-  return gradientArray;
   
+    // Calculate the average distance
+    setAverageDistance(totalDistance / totalDuration);
+  
+    // Return both the gradient array and the average distance
+    return gradientArray;
   };
 
   const createGradient = (gradientArray) => {
@@ -491,7 +516,7 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
   };
 
   const updateHeightInFirebase = (newHeight) => {
-    const heightRef = ref(database, 'Controls/HeightValue');
+    const heightRef = ref(database, `${current_user}/Controls/HeightValue`);
     set(heightRef, newHeight).catch((error) => {
       console.error("Error updating height in Firebase", error);});
   };
@@ -524,7 +549,7 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
             <img src={logoImg} alt="Intellidesk Logo" style={{ width: '286px', height: 'auto' }} />
             <div >{postureNudge && <IoIosBody style={{ color: '#EE5757' }}/>}</div>
             <div style={styles.horizontalLine}></div>
-            <div style={{ fontSize: '50px', color: '#9FDD94'}}> User 1 </div>
+            <div style={{ fontSize: '50px', color: '#9FDD94'}}> {current_user} </div>
             {/* <div style={{ fontSize: '30px', color: '#FFFFFF'}}> 
               Screen-Eye Distance: <span style={{color: '#9FDD94'}}>{averageDistance.toFixed(1)}</span> cm
             </div> */}
@@ -601,7 +626,7 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
             <img src={logoImg} alt="Intellidesk Logo" style={{ width: '286px', height: 'auto' }} />
             <div >{postureNudge && <IoIosBody style={{ color: 'red' }}/>}</div>
             <div style={styles.horizontalLine}></div>
-            <div style={{ fontSize: '50px', color: '#9FDD94'}}> User 1 </div>
+            <div style={{ fontSize: '50px', color: '#9FDD94'}}> {current_user} </div>
           </div>
 
         {/* <div style={styles.buttonContainer}>
@@ -623,7 +648,7 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
           <div style={{ ...styles.buttonContainer, padding: '20px', marginTop: '0', paddingBottom: '20px' }}>
           <div style={styles.label}>Posture</div>
           <div style={{fontSize: '60px', textAlign: 'right', paddingRight: '40px'}}>
-            <span style={{color: '#9FDD94'}}>{93}</span>
+            <span style={{color: '#9FDD94'}}>{averageScore}</span>
             <span style={{fontSize: '35px'}}>/100</span>
           </div>
           <div style={styles.progressBarS}>
