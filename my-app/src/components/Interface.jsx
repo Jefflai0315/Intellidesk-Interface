@@ -259,8 +259,21 @@ const Interface = () => {
   // functions to handle the preset states
   const [activeButtons, setActiveButtons] = useState({});
 
+  // lock button components
+  const [isLocked, setIsLocked] = useState(false);
+
   // Function to handle button click
   const handleButtonClick = (buttonKey) => {
+    if (buttonKey === 'lockButton') {
+      setIsLocked(!isLocked); // Toggle the locked state
+      // Don't proceed further if it's the lock button
+      return;
+    }
+  
+    if (isLocked) {
+      // If controls are locked, do not allow any other buttons to perform actions
+      return;
+    }
     // Toggle the button's active state
     setActiveButtons(prevState => ({
         ...prevState,
@@ -498,6 +511,10 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
   };
   
   const handleIncrease = () => {
+    if (isLocked) {
+      // If controls are locked, do not allow increase action
+      return;
+    }
     setHeight(prevHeight => {
       const newHeight = (parseFloat(prevHeight) + 0.1).toFixed(1);
       updateHeightInFirebase(newHeight);
@@ -506,6 +523,10 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
   };
   
   const handleDecrease = () => {
+    if (isLocked) {
+      // If controls are locked, do not allow increase action
+      return;
+    }
     setHeight(prevHeight => {
       const newHeight = (parseFloat(prevHeight) - 0.1).toFixed(1);
       updateHeightInFirebase(newHeight);
@@ -553,11 +574,11 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
                   height: '180px',
                   fontSize: '50px',
                   borderRadius: '25px',
-                  backgroundColor: activeStates['lockButton'] ? '#9FDD94' : '#444444', // Change to your default color
+                  backgroundColor: isLocked ? '#9FDD94' : '#444444', // Change to your default color
                 }}
               >
                 <img
-                  src={activeStates['lockButton'] ? lockWhite : unlockWhite} // Change 'unlockActive' to the active state icon
+                  src={isLocked ? lockWhite : unlockWhite} // Show 'unlockActive' to the active state icon
                   alt="Lock"
                   style={{ width: '36px', height: '50px' }}
                 />
