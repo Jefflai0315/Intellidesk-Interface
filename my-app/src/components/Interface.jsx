@@ -11,6 +11,8 @@ import camGreenOff from '../imgs/cam_white.png';
 import unlockWhite from '../imgs/unlock_white.png';
 import logoImg from '../imgs/logo@720x.png';
 import { useSwipeable } from 'react-swipeable';
+// import stylesA from './themeA.module.css';
+// import stylesB from './themeB.module.css';
 
 // Right before the Interface component function
 const totalPages = 3; // Set this to the total number of pages you have
@@ -44,10 +46,12 @@ const Clock = ({ style }) => {
 };
 
 const Interface = () => {
+  const [isThemeA, setIsThemeA] = useState(true); // true for themeA, false for themeB
 
   const styles = {
     container: {
       display: 'flex',
+      flexDirection: 'row', // Align children in a column
       justifyContent: 'space-between',
       alignItems: 'center',
       backgroundColor: '#000',
@@ -98,9 +102,10 @@ const Interface = () => {
       display: 'flex',
       justifyContent: 'space-evenly', // Align children with equal space between them
       flexDirection: 'column', // Align children in a column
-      flexGrow: 1,
-      borderRadius: '25px', // Allows the child to grow and fill the available space
+      // flexGrow: 1,
+      // borderRadius: '25px', // Allows the child to grow and fill the available space
       // padding: '20px', // Optional: Add padding to the container
+      position: 'relative',
     },
     buttonContainerPg2: {
       height:'100%',
@@ -114,12 +119,14 @@ const Interface = () => {
     },
     buttonGroup: {
       height:'100%',
+      width: '100%',
+      // minWidth: '130px',
       display: 'flex',
-      justifyContent: 'space-evenly',
-      // flexDirection: 'row', // Align children in a column
-      flexGrow: 1,
+      // justifyContent: 'space-evenly',
+      flexDirection: 'row', // Align children in a column
+      // flexGrow: 1,
       alignItems: 'center',
-      borderRadius: '25px', // Allows the child to grow and fill the available space
+      // borderRadius: '25px', // Allows the child to grow and fill the available space
     },
     activeButton: {
       backgroundColor: '#9FDD94', 
@@ -150,7 +157,6 @@ const Interface = () => {
 
     //Pg 2 styles
     groupContainer: {
-      
       // Other styles for the container
     },
     stackContainer: {
@@ -534,6 +540,64 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
     });
   };
 
+  const HeaderThemeA = () => {
+    return (
+      <div style={styles.buttonContainer}>
+        <div style={styles.buttonGroup}>
+          <button onClick={() => handleButtonClick('offCharge')} style={getButtonStyleC('offCharge')}>
+            {
+              activeButtons['offCharge']
+              ? <img src={chargeGreenOff} alt="Charge Icon Off" style={styles.icon} />
+              : <img src={chargeGreen} alt="Charge Icon" style={styles.icon} />
+            }
+          </button>
+          <button onClick={() => handleButtonClick('offCam')} style={getButtonStyleC('offCam')}>
+            {
+              activeButtons['offCam']
+              ? <img src={camGreenOff} alt="Cam Icon Off" style={{ width: '120px', height: '100px' }} />
+              : <img src={camGreen} alt="Cam Icon" style={{ width: '120px', height: '100px' }} />
+            }
+          </button>
+        </div>
+        <div className="controls" style={styles.buttonGroup}>
+          <button onClick={() => handleButtonClick('sitting')} style={getButtonStyleP(presets.sitting)}>1</button>
+          <button onClick={() => handleButtonClick('standing')} style={getButtonStyleP(presets.standing)}>2</button>
+          <button onClick={() => handleButtonClick('elevated1')} style={getButtonStyleP(presets.elevated1)}>3</button>
+          <button onClick={() => handleButtonClick('elevated2')} style={getButtonStyleP(presets.elevated2)}>4</button>
+        </div>
+      </div>
+    );
+  };
+  
+  const HeaderThemeB = () => {
+    return (
+      <div style={styles.buttonContainer}>
+        <div style={styles.buttonGroup}>
+          <button onClick={() => handleButtonClick('offCharge')} style={getButtonStyleC('offCharge')}>
+            {
+              activeButtons['offCharge']
+              ? <img src={chargeGreenOff} alt="Charge Icon Off" style={styles.icon} />
+              : <img src={chargeGreen} alt="Charge Icon" style={styles.icon} />
+            }
+          </button>
+          <button onClick={() => handleButtonClick('offCam')} style={getButtonStyleC('offCam')}>
+            {
+              activeButtons['offCam']
+              ? <img src={camGreenOff} alt="Cam Icon Off" style={{ width: '120px', height: '100px' }} />
+              : <img src={camGreen} alt="Cam Icon" style={{ width: '120px', height: '100px' }} />
+            }
+          </button>
+        </div>
+        {/* <div className="controls" style={styles.buttonGroup}>
+          <button onClick={() => handleButtonClick('sitting')} style={getButtonStyleP(presets.sitting)}>1</button>
+          <button onClick={() => handleButtonClick('standing')} style={getButtonStyleP(presets.standing)}>2</button>
+          <button onClick={() => handleButtonClick('elevated1')} style={getButtonStyleP(presets.elevated1)}>3</button>
+          <button onClick={() => handleButtonClick('elevated2')} style={getButtonStyleP(presets.elevated2)}>4</button>
+        </div> */}
+      </div>
+    );
+  };
+
   return (
     <div {...swipeHandlers} >
       {/* Render the screen based on the current index */}
@@ -542,7 +606,7 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
       </div>
       {screenIndex === 0 && (
         <div style={styles.container}>
-          <div style={{ position: 'relative', height: '100%', width: '55%', top: '10px', left: '10px' }}>
+          <div style={{ position: 'relative', height: '100%', width: '30%', top: '10px', left: '10px' }}>
             <img src={logoImg} alt="Intellidesk Logo" style={{ width: '286px', height: 'auto' }} />
             <div >{postureNudge && <IoIosBody style={{ color: '#EE5757', top: '10px', left: '10px' }}/>}</div>
             <div style={styles.horizontalLine}></div>
@@ -553,15 +617,18 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
               <div style={{ fontSize: '45px' }}>CM</div>
             </div>
           </div>
-          <div style={styles.buttonGroup}>
-            <div style={styles.buttonContainer}>
+          <div style={{...styles.buttonGroup, width: '40%', margin: 0}}>
+            <div style={{...styles.buttonContainer, width: 'fit-content'}}>
               <button onClick={handleIncrease} style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '110px',height: '180px', fontSize: '50px', borderRadius: '25px'}}>▲</button>
               <button onClick={handleDecrease} style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '110px',height: '180px', fontSize: '50px', borderRadius: '25px'}}>▼</button>
             </div>
             <div style={styles.verticalLine}></div>
-            <div style={styles.buttonContainer}>
+            <div style={{...styles.buttonContainer, width: 'fit-content'}}>
               <button 
-                onClick={() => handleButtonClick('modeButton')}
+                onClick={() => {
+                  setIsThemeA(!isThemeA)
+                  handleButtonClick('modeButton')
+                }}
                 style={getButtonStyleBold('modeButton')}>
                 M
               </button>
@@ -585,32 +652,8 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
               </button>
             </div>
           </div>
-          <div style={styles.buttonContainer}>
-            <div style={styles.buttonGroup}>
-              <button onClick={() => handleButtonClick('offCharge')} style={getButtonStyleC('offCharge')}>
-                {
-                  activeButtons['offCharge']
-                  ? <img src={chargeGreenOff} alt="Charge Icon Off" style={styles.icon} />
-                  : <img src={chargeGreen} alt="Charge Icon" style={styles.icon} />
-                }
-              </button>
-              <button onClick={() => handleButtonClick('offCam')} style={getButtonStyleC('offCam')}>
-                {
-                  activeButtons['offCam']
-                  ? <img src={camGreenOff} alt="Cam Icon Off" style={{ width: '120px', height: '100px' }} />
-                  : <img src={camGreen} alt="Cam Icon" style={{ width: '120px', height: '100px' }} />
-                }
-              </button>
-            </div>
-            <div style={styles.buttonContainer}>
-            <div className="controls" style={styles.buttonGroup} >
-              <button onClick={() => handleButtonClick('sitting')} style={getButtonStyleP(presets.sitting)}>1</button>
-              <button onClick={() => handleButtonClick('standing')} style={getButtonStyleP(presets.standing)}>2</button>
-              <button onClick={() => handleButtonClick('elevated1')} style={getButtonStyleP(presets.elevated1)}>3</button>
-              <button onClick={() => handleButtonClick('elevated2')} style={getButtonStyleP(presets.elevated2)}>4</button>
-            </div>
-          </div>
-          </div>
+          <div style={{ width: '100%', margin: 0 }}>
+            {isThemeA ? <HeaderThemeA /> : <HeaderThemeB />} </div>
           </div>
       )}
       {screenIndex === 1 && (
