@@ -13,7 +13,7 @@ import logoImg from '../imgs/logo@720x.png';
 import { useSwipeable } from 'react-swipeable';
 
 // Right before the Interface component function
-const totalPages = 2; // Set this to the total number of pages you have
+const totalPages = 3; // Set this to the total number of pages you have
 
 // Clock component
 const Clock = ({ style }) => {
@@ -63,14 +63,14 @@ const Interface = () => {
     label:{
       flexGrow: 1, // Allows the child to grow and fill the available space
       margin: '0 1%', // Optional: Adds margin to each side of the child element
-      fontSize: '30px', // Optional: Adjust the font size of the label
+      fontSize: '40px', // Optional: Adjust the font size of the label
     },
     heightDisplay: {
       fontSize: '106px',
       letterSpacing: '5px', // to simulate the XXX.X appearance
     },
     button: {
-      width: '120px', // Adjusted size to match image
+      width: '130px', // Adjusted size to match image
       height: '120px',
       margin: '15px',
       fontSize: '24px', // Larger font size if necessary
@@ -80,7 +80,7 @@ const Interface = () => {
       borderRadius: '25px',
     },
     boldButton: {
-      width: '120px', // Adjusted size to match image
+      width: '130px', // Adjusted size to match image
       height: '180px',
       fontSize: '50px', // Larger font size if necessary
       backgroundColor: '#9FDD94', // Match the dark theme in the image
@@ -139,7 +139,7 @@ const Interface = () => {
     },
     horizontalLine: {
       borderTop: '1px solid #A9FF9B', // Adjust color as needed
-      minWidth: '100%', // Line height to fill the parent div
+      width: '310px', // Line height to fill the parent div
       alignSelf: 'stretch', // Stretch line to fill the height of the parent div
       marginRight: '20px', // Space from the right container
     },
@@ -301,7 +301,7 @@ const Interface = () => {
     fontWeight: 'bold',
     justifyContent: 'center',
     alignItems: 'center',
-    width: '22%',
+    width: '23%',
     height: '180px',
     borderRadius: '25px'
   };
@@ -361,7 +361,8 @@ const Interface = () => {
   // Define the container for the page indicator
   const pageIndicatorContainerStyle = {
     position: 'absolute', // Position it relative to the Interface component
-    bottom: '495px', // Place it at the bottom with a margin of 10px
+    // Place it at the bottom with a margin of 10px
+    top: '430px',
     left: '50%', // Center align the container
     transform: 'translateX(-50%)', // This ensures it's centered regardless of the width
     display: 'flex',
@@ -520,23 +521,21 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
       </div>
       {screenIndex === 0 && (
         <div style={styles.container}>
-          <div>
+          <div style={{ position: 'relative', height: '100%', width: '55%', top: '10px', left: '10px' }}>
             <img src={logoImg} alt="Intellidesk Logo" style={{ width: '286px', height: 'auto' }} />
-            <div >{postureNudge && <IoIosBody style={{ color: '#EE5757' }}/>}</div>
+            <div >{postureNudge && <IoIosBody style={{ color: '#EE5757', top: '10px', left: '10px' }}/>}</div>
             <div style={styles.horizontalLine}></div>
             <div style={{ fontSize: '50px', color: '#9FDD94'}}> User 1 </div>
-            {/* <div style={{ fontSize: '30px', color: '#FFFFFF'}}> 
-              Screen-Eye Distance: <span style={{color: '#9FDD94'}}>{averageDistance.toFixed(1)}</span> cm
-            </div> */}
-            <div style={{ fontSize: '30px', color: '#FFFFFF', paddingTop: '10px'}}>Table Height:</div>
-            <div style={{ fontSize: '85px', textAlign: 'right' }}>
-              <span style={{color: '#9FDD94'}}>{height}</span> CM
+            <div style={{ fontSize: '40px', color: '#FFFFFF', paddingTop: '15px'}}>Table Height:</div>
+            <div style={{ textAlign: 'right', position: 'relative', left: '-10px' }}>
+              <div style={{ color: '#9FDD94', fontSize: '110px' }}>{height}</div>
+              <div style={{ fontSize: '45px' }}>CM</div>
             </div>
           </div>
           <div style={styles.buttonGroup}>
             <div style={styles.buttonContainer}>
-              <button onClick={handleIncrease} style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '120px',height: '180px', fontSize: '50px', borderRadius: '25px'}}>▲</button>
-              <button onClick={handleDecrease} style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '120px',height: '180px', fontSize: '50px', borderRadius: '25px'}}>▼</button>
+              <button onClick={handleIncrease} style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '110px',height: '180px', fontSize: '50px', borderRadius: '25px'}}>▲</button>
+              <button onClick={handleDecrease} style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '110px',height: '180px', fontSize: '50px', borderRadius: '25px'}}>▼</button>
             </div>
             <div style={styles.verticalLine}></div>
             <div style={styles.buttonContainer}>
@@ -550,7 +549,7 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
                   display: 'flex',
                   justifyContent: 'center',
                   alignItems: 'center',
-                  width: '120px',
+                  width: '130px',
                   height: '180px',
                   fontSize: '50px',
                   borderRadius: '25px',
@@ -596,14 +595,12 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
       {screenIndex === 1 && (
         // Your second screen JSX
       <div style={styles.container}>
-        <div style={{ position: 'relative'}}>
-            <Clock style={{ position: 'absolute', bottom: '195px', left: '0' }}/> 
-            <img src={logoImg} alt="Intellidesk Logo" style={{ width: '286px', height: 'auto' }} />
-            <div >{postureNudge && <IoIosBody style={{ color: 'red' }}/>}</div>
-            <div style={styles.horizontalLine}></div>
-            <div style={{ fontSize: '50px', color: '#9FDD94'}}> User 1 </div>
-          </div>
-
+        <div style={{ position: 'relative', height: '100%', width: '24%', top: '10px', left: '10px' }}>
+          <img src={logoImg} alt="Intellidesk Logo" style={{ width: '286px', height: 'auto' }} />
+          <div >{postureNudge && <IoIosBody style={{ color: '#EE5757', top: '10px', left: '10px' }}/>}</div>
+          <div style={styles.horizontalLine}></div>
+          <div style={{ fontSize: '50px', color: '#9FDD94'}}> User 1 </div>
+        </div>
         {/* <div style={styles.buttonContainer}>
         <div style={styles.label}>{isStanding ? 'Stand Time' : 'Sit Time'}</div>
         <div style={styles.progressBar}>
@@ -619,12 +616,12 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
               </div>
               <div style={styles.slider}> {/* Replace with actual slider component */}</div>
             </div>        
-        <div style={styles.stackContainer}>
+        <div style={{...styles.stackContainer, marginTop: '15px'}}>
           <div style={{ ...styles.buttonContainer, padding: '20px', marginTop: '0', paddingBottom: '20px' }}>
           <div style={styles.label}>Posture</div>
-          <div style={{fontSize: '60px', textAlign: 'right', paddingRight: '40px'}}>
+          <div style={{fontSize: '70px', textAlign: 'right', paddingRight: '40px'}}>
             <span style={{color: '#9FDD94'}}>{93}</span>
-            <span style={{fontSize: '35px'}}>/100</span>
+            <span style={{fontSize: '40px'}}>/100</span>
           </div>
           <div style={styles.progressBarS}>
             <div style={{ ...styles.progress, width: '100%', background: PostureGradient }}></div>
@@ -633,9 +630,9 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
         </div>
           <div style={{ ...styles.buttonContainer, padding: '15px', marginTop: '0'  }}>
             <div style={styles.label}>Screen-Eye Distance</div>
-            <div style={{ fontSize: '60px', color: '#FFFFFF', textAlign: 'right', paddingRight: '30px'}}> 
+            <div style={{ fontSize: '70px', color: '#FFFFFF', textAlign: 'right', paddingRight: '30px'}}> 
               <span style={{color: '#9FDD94'}}>{averageDistance.toFixed(1)}</span>
-              <span style={{fontSize: '35px'}}>cm</span>
+              <span style={{fontSize: '40px'}}>cm</span>
             </div>
             <div style={styles.progressBarS}>
               <div style={{ ...styles.progress, width: '100%', background: EyeScreenGradient }}></div>
@@ -644,6 +641,22 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
           </div>
         </div>
         {/* </div> */}
+        </div>
+      </div>
+      )}
+      {screenIndex === 2 && (
+        // Your second screen JSX
+        <div style={styles.container}>
+        <div style={{ position: 'relative', height: '100%', width: '54.5%', top: '10px', left: '10px' }}>
+          <img src={logoImg} alt="Intellidesk Logo" style={{ width: '286px', height: 'auto' }} />
+          <div >{postureNudge && <IoIosBody style={{ color: '#EE5757', top: '10px', left: '10px' }}/>}</div>
+          <div style={styles.horizontalLine}></div>
+          <div style={{ fontSize: '50px', color: '#9FDD94'}}> User 1 </div>
+          <Clock style={{ position: 'absolute', top: '150px', left: '40px', fontSize: '130px', fontFamily: 'Open Sans, sans-serif' }}/>
+        </div>
+        <div style={styles.verticalLine}></div>
+        <div style={{ position: 'relative', height: '100%', width: '55%', top: '10px', left: '10px' }}>
+          {/* <Clock style={{ position: 'absolute', top: '0', left: '0' }}/> */}
         </div>
       </div>
       )}
