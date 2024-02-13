@@ -790,7 +790,7 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
           <img src={logoImg} alt="Intellidesk Logo" style={{ width: '286px', height: 'auto' }} />
           <div >{postureNudge && <IoIosBody style={{ color: '#EE5757', top: '10px', left: '10px' }}/>}</div>
           <div style={styles.horizontalLine}></div>
-          <div style={{ fontSize: '50px', color: '#9FDD94'}}> User 1 </div>
+          <div style={{ fontSize: '50px', color: '#9FDD94'}}> {current_user} </div>
         </div>
         {/* <div style={styles.buttonContainer}>
         <div style={styles.label}>{isStanding ? 'Stand Time' : 'Sit Time'}</div>
@@ -811,7 +811,7 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
           <div style={{ ...styles.buttonContainer, padding: '20px', marginTop: '0', paddingBottom: '20px' }}>
           <div style={styles.label}>Posture</div>
           <div style={{fontSize: '70px', textAlign: 'right', paddingRight: '40px'}}>
-            <span style={{color: '#9FDD94'}}>{93}</span>
+            <span style={{color: '#9FDD94'}}>{averageScore}</span>
             <span style={{fontSize: '40px'}}>/100</span>
           </div>
           <div style={styles.progressBarS}>
@@ -842,7 +842,7 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
           <img src={logoImg} alt="Intellidesk Logo" style={{ width: '286px', height: 'auto' }} />
           <div >{postureNudge && <IoIosBody style={{ color: '#EE5757', top: '10px', left: '10px' }}/>}</div>
           <div style={styles.horizontalLine}></div>
-          <div style={{ fontSize: '50px', color: '#9FDD94'}}> User 1 </div>
+          <div style={{ fontSize: '50px', color: '#9FDD94'}}> {current_user} </div>
           <Clock style={{ position: 'absolute', top: '150px', left: '40px', fontSize: '130px', fontFamily: 'Open Sans, sans-serif' }}/>
         </div>
         <div style={styles.verticalLine}></div>
