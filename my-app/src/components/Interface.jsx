@@ -10,6 +10,7 @@ import chargeGreenOff from '../imgs/charge_white.png';
 import camGreenOff from '../imgs/cam_white.png';
 import unlockWhite from '../imgs/unlock_white.png';
 import logoImg from '../imgs/logo@720x.png';
+import settingsWhite from '../imgs/settings_white.png';
 import { useSwipeable } from 'react-swipeable';
 // import stylesA from './themeA.module.css';
 // import stylesB from './themeB.module.css';
@@ -46,7 +47,7 @@ const Clock = ({ style }) => {
 };
 
 const Interface = () => {
-  const [isThemeA, setIsThemeA] = useState(true); // true for themeA, false for themeB
+  const [settingsPg, setCurrentSettingsPg] = useState('pg1'); 
 
   const styles = {
     container: {
@@ -275,7 +276,6 @@ const Interface = () => {
       // Don't proceed further if it's the lock button
       return;
     }
-  
     if (isLocked) {
       // If controls are locked, do not allow any other buttons to perform actions
       return;
@@ -285,28 +285,15 @@ const Interface = () => {
         ...prevState,
         [buttonKey]: !prevState[buttonKey]
     }));
-      
     setActiveStates(prevActiveStates => ({
       ...prevActiveStates,
       [buttonKey]: !prevActiveStates[buttonKey]
     }));
-
     // Call handlePreset only for specific buttons and if they are being activated
     if (buttonKey !== 'offCam' && buttonKey !== 'offCharge' && !activeButtons[buttonKey] && buttonKey !== 'lockButton' && buttonKey !== 'modeButton') {
         handlePreset(presets[buttonKey]);
     }
 };
-
-  // const updateButtonAppearance = (buttonNumber) => {
-  //   setActiveButtons(buttonNumber); // Set the clicked button as active
-  // };
-
-  // // Function to handle preset application
-  // const handlePresetApplication = (buttonNumber) => {
-  //   if (buttonNumber !== 'offCam' && buttonNumber !== 'offCharge') {
-  //     handlePreset(presets[buttonNumber]);
-  //   }
-  // };
 
   const [activePreset, setActivePreset] = useState(null);
   const handlePreset = (preset) => {
@@ -345,10 +332,22 @@ const Interface = () => {
     backgroundColor: activeButtons[buttonKey] ? '#9FDD94' : '#444444', // Change background color if active
   });
 
-  const getButtonStyleBold = (buttonKey) => ({
-    ...styles.boldButton,
-    backgroundColor: activeStates[buttonKey] ? '#9FDD94' : '#444444', // Change background color if active
-  });
+  const getButtonStyleForTheme = (settingsPg) => {
+    const isBold = settingsPg === 'pg2' || settingsPg === 'pg3' || settingsPg === 'pg4' || settingsPg === 'pg5';
+    return {
+      // fontWeight: isBold ? 'bold' : 'normal',
+      // Add other conditional styles based on isActive or theme
+      backgroundColor: isBold ? '#9FDD94' : '#444444',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      width: '130px',
+      height: '180px',
+      fontSize: '50px',
+      borderRadius: '25px',
+      // Ensure you return other necessary styles for the button
+    };
+  };
 
   // Dot component
   const Dot = ({ isActive, onClick }) => (
@@ -540,7 +539,16 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
     });
   };
 
-  const HeaderThemeA = () => {
+  // Settings page togggles
+  const handleSettingsToggle = () => {
+    setCurrentSettingsPg(prevPg => {
+      const newPg = prevPg === 'pg1' ? 'pg2' : prevPg === 'pg2' ? 'pg3' : prevPg === 'pg3' ? 'pg4' : prevPg === 'pg4' ? 'pg5' : 'pg1';
+      console.log("Settings Pg: ", newPg); // Debugging line
+      return newPg;
+    });
+  };
+
+  const SettingsPg1 = () => {
     return (
       <div style={styles.buttonContainer}>
         <div style={styles.buttonGroup}>
@@ -569,7 +577,7 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
     );
   };
   
-  const HeaderThemeB = () => {
+  const SettingsPg2 = () => {
     return (
       <div style={styles.buttonContainer}>
         <div style={styles.buttonGroup}>
@@ -597,6 +605,96 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
       </div>
     );
   };
+  const SettingsPg3 = () => {
+    return (
+      <div style={styles.buttonContainer}>
+        <div style={styles.buttonGroup}>
+          <button onClick={() => handleButtonClick('offCharge')} style={getButtonStyleC('offCharge')}>
+            {
+              activeButtons['offCharge']
+              ? <img src={chargeGreenOff} alt="Charge Icon Off" style={styles.icon} />
+              : <img src={chargeGreen} alt="Charge Icon" style={styles.icon} />
+            }
+          </button>
+          {/* <button onClick={() => handleButtonClick('offCam')} style={getButtonStyleC('offCam')}>
+            {
+              activeButtons['offCam']
+              ? <img src={camGreenOff} alt="Cam Icon Off" style={{ width: '120px', height: '100px' }} />
+              : <img src={camGreen} alt="Cam Icon" style={{ width: '120px', height: '100px' }} />
+            }
+          </button> */}
+        </div>
+        {/* <div className="controls" style={styles.buttonGroup}>
+          <button onClick={() => handleButtonClick('sitting')} style={getButtonStyleP(presets.sitting)}>1</button>
+          <button onClick={() => handleButtonClick('standing')} style={getButtonStyleP(presets.standing)}>2</button>
+          <button onClick={() => handleButtonClick('elevated1')} style={getButtonStyleP(presets.elevated1)}>3</button>
+          <button onClick={() => handleButtonClick('elevated2')} style={getButtonStyleP(presets.elevated2)}>4</button>
+        </div> */}
+      </div>
+    );
+  };
+
+  const SettingsPg4 = () => {
+    return (
+      <div style={styles.buttonContainer}>
+        <div style={styles.buttonGroup}>
+          <button onClick={() => handleButtonClick('offCharge')} style={getButtonStyleC('offCharge')}>
+            {
+              activeButtons['offCharge']
+              ? <img src={chargeGreenOff} alt="Charge Icon Off" style={styles.icon} />
+              : <img src={chargeGreen} alt="Charge Icon" style={styles.icon} />
+            }
+          </button>
+          {/* <button onClick={() => handleButtonClick('offCam')} style={getButtonStyleC('offCam')}>
+            {
+              activeButtons['offCam']
+              ? <img src={camGreenOff} alt="Cam Icon Off" style={{ width: '120px', height: '100px' }} />
+              : <img src={camGreen} alt="Cam Icon" style={{ width: '120px', height: '100px' }} />
+            }
+          </button> */}
+        </div>
+        {/* <div className="controls" style={styles.buttonGroup}>
+          <button onClick={() => handleButtonClick('sitting')} style={getButtonStyleP(presets.sitting)}>1</button>
+          <button onClick={() => handleButtonClick('standing')} style={getButtonStyleP(presets.standing)}>2</button>
+          <button onClick={() => handleButtonClick('elevated1')} style={getButtonStyleP(presets.elevated1)}>3</button>
+          <button onClick={() => handleButtonClick('elevated2')} style={getButtonStyleP(presets.elevated2)}>4</button>
+        </div> */}
+        4
+      </div>
+    );
+  };
+
+  const SettingsPg5 = () => {
+    return (
+      <div style={styles.buttonContainer}>
+        <div style={styles.buttonGroup}>
+          <button onClick={() => handleButtonClick('offCharge')} style={getButtonStyleC('offCharge')}>
+            {
+              activeButtons['offCharge']
+              ? <img src={chargeGreenOff} alt="Charge Icon Off" style={styles.icon} />
+              : <img src={chargeGreen} alt="Charge Icon" style={styles.icon} />
+            }
+          </button>
+          {/* <button onClick={() => handleButtonClick('offCam')} style={getButtonStyleC('offCam')}>
+            {
+              activeButtons['offCam']
+              ? <img src={camGreenOff} alt="Cam Icon Off" style={{ width: '120px', height: '100px' }} />
+              : <img src={camGreen} alt="Cam Icon" style={{ width: '120px', height: '100px' }} />
+            }
+          </button> */}
+        </div>
+        {/* <div className="controls" style={styles.buttonGroup}>
+          <button onClick={() => handleButtonClick('sitting')} style={getButtonStyleP(presets.sitting)}>1</button>
+          <button onClick={() => handleButtonClick('standing')} style={getButtonStyleP(presets.standing)}>2</button>
+          <button onClick={() => handleButtonClick('elevated1')} style={getButtonStyleP(presets.elevated1)}>3</button>
+          <button onClick={() => handleButtonClick('elevated2')} style={getButtonStyleP(presets.elevated2)}>4</button>
+        </div> */}
+        5
+      </div>
+    );
+  };
+
+  console.log("Button Style:", getButtonStyleForTheme(settingsPg));
 
   return (
     <div {...swipeHandlers} >
@@ -626,11 +724,10 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
             <div style={{...styles.buttonContainer, width: 'fit-content'}}>
               <button 
                 onClick={() => {
-                  setIsThemeA(!isThemeA)
-                  handleButtonClick('modeButton')
+                  handleSettingsToggle();
                 }}
-                style={getButtonStyleBold('modeButton')}>
-                M
+                style={getButtonStyleForTheme(settingsPg)}>
+                <img src={settingsWhite} alt="settingsIcon" style={{...styles.icon, height: '75px', width: '75px'}}/>
               </button>
               <button onClick={() => handleButtonClick('lockButton')}
                 style={{
@@ -653,8 +750,13 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
             </div>
           </div>
           <div style={{ width: '100%', margin: 0 }}>
-            {isThemeA ? <HeaderThemeA /> : <HeaderThemeB />} </div>
+            {settingsPg === 'pg1' && <SettingsPg1 />}
+            {settingsPg === 'pg2' && <SettingsPg2 />}
+            {settingsPg === 'pg3' && <SettingsPg3 />}
+            {settingsPg === 'pg4' && <SettingsPg4 />}
+            {settingsPg === 'pg5' && <SettingsPg5 />}
           </div>
+        </div>
       )}
       {screenIndex === 1 && (
         // Your second screen JSX
