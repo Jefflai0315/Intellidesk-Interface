@@ -19,7 +19,7 @@ import { useSwipeable } from 'react-swipeable';
 const totalPages = 3; // Set this to the total number of pages you have
 
 // Duration of the analysis, last 1 hour, 3 hour, etc
-const duration = 60 * 60 * 1000000;
+const duration = 60 * 60 * 100000000000;
 
 // Clock component
 const Clock = ({ style }) => {
@@ -202,6 +202,7 @@ const Interface = () => {
 
   const handlePageSelect = (pageIndex) => {
     setScreenIndex(pageIndex);
+
   };
 
   // Handler functions for swipe actions
@@ -234,12 +235,12 @@ const Interface = () => {
   const [averageScore, setAverageScore] = useState(0);
   const [postureNudge,setPostureNudge] = useState(false);
   const [current_user, setCurrentUser] = useState('JARVIS');
-
+  // const [screenIndex, setScreenIndex] = useState(0);
   // TODO: Retrieve active user from DB
   useEffect(() => {
     setCurrentUser("Jeff");
     console.log(current_user);
-  }, []);
+  }, [screenIndex]);
 
 
   useEffect(() => {
@@ -254,7 +255,7 @@ const Interface = () => {
         setPostureNudge(false);
       }
     });
-  }, []);
+  }, [screenIndex]);
 
   
   // Firebase data fetching and processing for posture
@@ -274,7 +275,7 @@ const Interface = () => {
           setPostureGradient(createGradient(processedData));
         }
       });
-  }, []);
+  }, [screenIndex]);
 
   const [activeStates, setActiveStates] = useState({});
 
@@ -381,12 +382,14 @@ const Interface = () => {
   // PageIndicator component
   const PageIndicator = ({ totalPages, currentPage, onPageSelect }) => (
     <div style={{ display: 'flex', justifyContent: 'center' }}>
+      
       {Array.from({ length: totalPages }, (_, index) => (
         <Dot
           key={index}
           isActive={index === currentPage}
           onClick={() => onPageSelect(index)}
         />
+
       ))}
     </div>
   );
@@ -454,7 +457,7 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
         setSitStandGradient(createGradient(processedData));
       }
     });
-  }, []);
+  }, [screenIndex]);
 
   // Function to process data and generate gradient
   const processSitStandData = (data) => {
@@ -486,7 +489,7 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
         setEyeScreenGradient(createGradient(processedData));
       }
     });
-  }, []);
+  }, [screenIndex]);
 
   // Function to process data and generate gradient
   const processEyeScreenDistanceData = (data) => {
