@@ -233,9 +233,39 @@ const Interface = () => {
   const [EyeScreenGradient, setEyeScreenGradient] = useState('');
   const [SitStandGradient, setSitStandGradient] = useState('');
   const [averageScore, setAverageScore] = useState(0);
-  const [postureNudge,setPostureNudge] = useState(false);
   const [current_user, setCurrentUser] = useState('JARVIS');
-  // const [screenIndex, setScreenIndex] = useState(0);
+  const [postureNudge,setPostureNudge] = useState(false);
+  const [videoUrl, setVideoUrl] = useState('');
+
+
+  // Retrieve nudging status
+  useEffect(() => {
+    const postureRef = query(ref(database, `/Controls/PostureNudge`));
+    onValue(postureRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data!=="0") {
+        setPostureNudge(true);
+        switch (data) {
+          case "1":
+            setVideoUrl("/assets/videos/stand_va.mp4");
+            break
+          case "2":
+            setVideoUrl("/assets/videos/back_pain_va.mp4");
+            break
+          case "3":
+            setVideoUrl("/assets/videos/eye_dist_va.mp4");
+            break
+        }
+      }
+      else {
+        setPostureNudge(false);
+        setVideoUrl("/assets/videos/idle_va.mp4");
+      }
+    });
+  }, [screenIndex]);
+
+
+
   // TODO: Retrieve active user from DB
   useEffect(() => {
     setCurrentUser("Jeff");
@@ -794,6 +824,18 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
           <div >{postureNudge && <IoIosBody style={{ color: '#EE5757', top: '10px', left: '10px' }}/>}</div>
           <div style={styles.horizontalLine}></div>
           <div style={{ fontSize: '50px', color: '#9FDD94'}}> {current_user} </div>
+          {videoUrl && <video 
+          src={videoUrl} 
+          autoPlay 
+          loop
+          style={{
+            width: '100%',
+            height: 'auto', 
+            backgroundColor: 'transparent', 
+            border: 'none', 
+          }}
+          />
+          }
         </div>
         {/* <div style={styles.buttonContainer}>
         <div style={styles.label}>{isStanding ? 'Stand Time' : 'Sit Time'}</div>
@@ -850,6 +892,19 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
         </div>
         <div style={styles.verticalLine}></div>
         <div style={{ position: 'relative', height: '100%', width: '55%', top: '10px', left: '10px' }}>
+
+        {videoUrl && <video 
+          src={videoUrl} 
+          autoPlay 
+          loop
+          style={{
+            width: '100%',
+            height: 'auto', 
+            backgroundColor: 'transparent', 
+            border: 'none', 
+          }}
+          />
+          }
           {/* <Clock style={{ position: 'absolute', top: '0', left: '0' }}/> */}
         </div>
       </div>
