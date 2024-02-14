@@ -327,6 +327,22 @@ const Interface = () => {
     }
 };
 
+  // State to keep track of sensitivity value
+  const [sensitivity, setSensitivity] = useState(1);
+
+  // Function to handle increase sensitivity
+  const handleIncreaseSensitivity = () => {
+    setSensitivity(prevSensitivity => {
+      // If the previous value is less than 4, increment it. Otherwise, keep it at 4.
+      return prevSensitivity < 4 ? prevSensitivity + 1 : 4;
+    });
+  };
+
+  // Function to handle decrease sensitivity
+  const handleDecreaseSensitivity = () => {
+    setSensitivity(prevSensitivity => (prevSensitivity > 1 ? prevSensitivity - 1 : 1)); // Prevents the value going below 1
+  };
+
   const [activePreset, setActivePreset] = useState(null);
   const handlePreset = (preset) => {
     applyPreset(preset);
@@ -662,11 +678,13 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
       <div style={styles.buttonContainer}>
         <div style={{ marginBottom: '10px',backgroundColor: 'white',height: '220px',borderRadius: '10px' }}>
           <div style={{ position: 'relative',fontSize: '45px',fontWeight: 'bold',color: 'black',left: '15px',top: '15px'  }}>Sensitivity</div>
-          <div style={{ position: 'relative',fontSize: '75px',fontWeight: 'bold',color: 'black',textAlign: 'right',right: '15px',top: '60px' }}>1</div>
+          <div style={{ position: 'relative',fontSize: '75px',fontWeight: 'bold',color: 'black',textAlign: 'right',right: '15px',top: '60px' }}>
+            {sensitivity} 
+          </div>
         </div>
         <div style={styles.buttonGroup}>
-          <button onClick={() => handleButtonClick('increaseHeight')} style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '288px',height: '140px', fontSize: '50px', borderRadius: '25px',backgroundColor: '#9FDD94' }}>▲</button>
-          <button onClick={() => handleButtonClick('decreaseHeight')} style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '288px',height: '140px', fontSize: '50px', borderRadius: '25px',backgroundColor: '#9FDD94'}}>▼</button>
+          <button onClick={handleIncreaseSensitivity} style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '288px',height: '140px', fontSize: '50px', borderRadius: '25px',backgroundColor: '#9FDD94' }}>▲</button>
+          <button onClick={handleDecreaseSensitivity} style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '288px',height: '140px', fontSize: '50px', borderRadius: '25px',backgroundColor: '#9FDD94'}}>▼</button>
         </div>
       </div>
     );
