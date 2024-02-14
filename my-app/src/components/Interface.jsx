@@ -607,19 +607,19 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
   const SettingsPg2 = () => {
     return (
       <div style={styles.buttonContainer}>
-        <div style={{ marginBottom: '10px',backgroundColor: 'white',height: '180px',borderRadius: '10px' }}>
+        <div style={{ marginBottom: '10px',backgroundColor: 'white',height: '220px',borderRadius: '10px' }}>
           <div style={{ position: 'relative',fontSize: '45px',fontWeight: 'bold',color: 'black',left: '15px',top: '15px'  }}>Fixed Height</div>
           <div style={{ position: 'relative',fontSize: '45px',fontWeight: 'bold',color: 'black',left: '15px',top: '15px' }}>1</div>
-          <div style={{ position: 'relative',fontSize: '65px',fontWeight: 'bold',color: 'black',textAlign: 'right',right: '15px' }}>XXX.XX cm</div>
+          <div style={{ position: 'relative',fontSize: '65px',fontWeight: 'bold',color: 'black',textAlign: 'right',right: '15px',top: '20px' }}>XXX.XX cm</div>
         </div>
         <div style={styles.buttonGroup}>
-          <button onClick={() => handleButtonClick('increaseHeight')} style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '110px',height: '180px', fontSize: '50px', borderRadius: '25px',backgroundColor: '#9FDD94' }}>▲</button>
+          <button onClick={() => handleButtonClick('increaseHeight')} style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '110px',height: '140px', fontSize: '50px', borderRadius: '25px',backgroundColor: '#9FDD94' }}>▲</button>
           <div>
-            <button onClick={() => handleButtonClick('presetHeight')} style={{ marginBottom: '10px',backgroundColor: '#444444',height: '180px',width:'347.5px',borderRadius: '25px' }}>
+            <button onClick={() => handleButtonClick('presetHeight')} style={{ marginBottom: '10px',backgroundColor: '#444444',height: '140px',width:'347.5px',borderRadius: '25px' }}>
               <div style={{ position: 'relative',fontSize: '55px',fontWeight: 'bold',color: 'white' }}>Height 1</div>
             </button>
           </div>
-          <button onClick={() => handleButtonClick('decreaseHeight')} style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '110px',height: '180px', fontSize: '50px', borderRadius: '25px',backgroundColor: '#9FDD94'}}>▼</button>
+          <button onClick={() => handleButtonClick('decreaseHeight')} style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '110px',height: '140px', fontSize: '50px', borderRadius: '25px',backgroundColor: '#9FDD94'}}>▼</button>
         </div>
       </div>
     );
@@ -627,28 +627,14 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
   const SettingsPg3 = () => {
     return (
       <div style={styles.buttonContainer}>
-        <div style={styles.buttonGroup}>
-          <button onClick={() => handleButtonClick('offCharge')} style={getButtonStyleC('offCharge')}>
-            {
-              activeButtons['offCharge']
-              ? <img src={chargeGreenOff} alt="Charge Icon Off" style={styles.icon} />
-              : <img src={chargeGreen} alt="Charge Icon" style={styles.icon} />
-            }
-          </button>
-          {/* <button onClick={() => handleButtonClick('offCam')} style={getButtonStyleC('offCam')}>
-            {
-              activeButtons['offCam']
-              ? <img src={camGreenOff} alt="Cam Icon Off" style={{ width: '120px', height: '100px' }} />
-              : <img src={camGreen} alt="Cam Icon" style={{ width: '120px', height: '100px' }} />
-            }
-          </button> */}
+        <div style={{ marginBottom: '10px',backgroundColor: 'white',height: '220px',borderRadius: '10px' }}>
+          <div style={{ position: 'relative',fontSize: '45px',fontWeight: 'bold',color: 'black',left: '15px',top: '15px'  }}>Table Thickness</div>
+          <div style={{ position: 'relative',fontSize: '65px',fontWeight: 'bold',color: 'black',textAlign: 'right',right: '15px',top: '70px' }}>XX.XX cm</div>
         </div>
-        {/* <div className="controls" style={styles.buttonGroup}>
-          <button onClick={() => handleButtonClick('sitting')} style={getButtonStyleP(presets.sitting)}>1</button>
-          <button onClick={() => handleButtonClick('standing')} style={getButtonStyleP(presets.standing)}>2</button>
-          <button onClick={() => handleButtonClick('elevated1')} style={getButtonStyleP(presets.elevated1)}>3</button>
-          <button onClick={() => handleButtonClick('elevated2')} style={getButtonStyleP(presets.elevated2)}>4</button>
-        </div> */}
+        <div style={styles.buttonGroup}>
+          <button onClick={() => handleButtonClick('increaseHeight')} style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '288px',height: '140px', fontSize: '50px', borderRadius: '25px',backgroundColor: '#9FDD94' }}>▲</button>
+          <button onClick={() => handleButtonClick('decreaseHeight')} style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '288px',height: '140px', fontSize: '50px', borderRadius: '25px',backgroundColor: '#9FDD94'}}>▼</button>
+        </div>
       </div>
     );
   };
