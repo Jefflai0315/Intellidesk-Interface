@@ -202,7 +202,6 @@ const Interface = () => {
 
   const handlePageSelect = (pageIndex) => {
     setScreenIndex(pageIndex);
-
   };
 
   // Handler functions for swipe actions
@@ -285,6 +284,9 @@ const Interface = () => {
   // lock button components
   const [isLocked, setIsLocked] = useState(false);
 
+  // state  for unit toggle
+  const [selectedUnit, setSelectedUnit] = useState('CM');
+
   // Function to handle button click
   const handleButtonClick = (buttonKey) => {
     if (buttonKey === 'lockButton') {
@@ -295,6 +297,11 @@ const Interface = () => {
     if (isLocked) {
       // If controls are locked, do not allow any other buttons to perform actions
       return;
+    }
+    if (buttonKey === 'changeCM') {
+      setSelectedUnit('CM'); // Set the unit to centimeters
+    } else if (buttonKey === 'changeIN') {
+      setSelectedUnit('IN'); // Set the unit to inches
     }
     // Toggle the button's active state
     setActiveButtons(prevState => ({
@@ -308,6 +315,15 @@ const Interface = () => {
     // Call handlePreset only for specific buttons and if they are being activated
     if (buttonKey !== 'offCam' && buttonKey !== 'offCharge' && !activeButtons[buttonKey] && buttonKey !== 'lockButton' && buttonKey !== 'modeButton') {
         handlePreset(presets[buttonKey]);
+    }
+    // Call handlePreset only for specific buttons and if they are being activated
+    if (buttonKey in presets) { // Check if buttonKey is a property in presets
+      const presetHeight = presets[buttonKey];
+      if (typeof presetHeight === 'number') { // Make sure it is a number
+        handlePreset(presetHeight);
+      } else {
+        console.error('Preset height is not a number:', presetHeight);
+      }
     }
 };
 
@@ -382,14 +398,12 @@ const Interface = () => {
   // PageIndicator component
   const PageIndicator = ({ totalPages, currentPage, onPageSelect }) => (
     <div style={{ display: 'flex', justifyContent: 'center' }}>
-      
       {Array.from({ length: totalPages }, (_, index) => (
         <Dot
           key={index}
           isActive={index === currentPage}
           onClick={() => onPageSelect(index)}
         />
-
       ))}
     </div>
   );
@@ -533,8 +547,12 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
   };
 
   const applyPreset = (presetHeight) => {
-    setHeight(presetHeight.toFixed(1));
-    updateHeightInFirebase(presetHeight);
+    if (presetHeight !== undefined && !isNaN(presetHeight)) {
+      setHeight(presetHeight.toFixed(1));
+      updateHeightInFirebase(presetHeight);
+    } else {
+      console.error('Invalid preset height:', presetHeight);
+    }
   };
 
   const updateHeightInFirebase = (newHeight) => {
@@ -659,11 +677,43 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
       <div style={styles.buttonContainer}>
         <div style={{ marginBottom: '10px',backgroundColor: 'white',height: '220px',borderRadius: '10px' }}>
           <div style={{ position: 'relative',fontSize: '45px',fontWeight: 'bold',color: 'black',left: '15px',top: '15px'  }}>Units</div>
-          <div style={{ position: 'relative',fontSize: '75px',fontWeight: 'bold',color: 'black',textAlign: 'right',right: '15px',top: '60px' }}>CM</div>
+          <div style={{ position: 'relative',fontSize: '75px',fontWeight: 'bold',color: 'black',textAlign: 'right',right: '15px',top: '60px' }}>{selectedUnit}</div>
         </div>
         <div style={styles.buttonGroup}>
-          <button onClick={() => handleButtonClick('increaseHeight')} style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '288px',height: '140px', fontSize: '60px', fontWeight: 'bold', borderRadius: '25px',backgroundColor: '#9FDD94' }}>CM</button>
-          <button onClick={() => handleButtonClick('decreaseHeight')} style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '288px',height: '140px', fontSize: '60px', fontWeight: 'bold', borderRadius: '25px',backgroundColor: '#444444'}}>IN</button>
+          <button
+            onClick={() => handleButtonClick('changeCM')}
+            style={{
+              ...styles.boldButton,
+              backgroundColor: selectedUnit === 'CM' ? '#9FDD94' : '#444444', // Toggle color based on selection
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              width: '288px',
+              height: '140px', 
+              fontSize: '60px', 
+              fontWeight: 'bold', 
+              borderRadius: '25px',
+            }}
+          >
+            CM
+          </button>
+          <button
+            onClick={() => handleButtonClick('changeIN')}
+            style={{
+              ...styles.boldButton,
+              backgroundColor: selectedUnit === 'IN' ? '#9FDD94' : '#444444', // Toggle color based on selection
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              width: '288px',
+              height: '140px', 
+              fontSize: '60px', 
+              fontWeight: 'bold', 
+              borderRadius: '25px',
+            }}
+          >
+            IN
+          </button>
         </div>
       </div>
     );
