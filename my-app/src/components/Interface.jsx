@@ -656,7 +656,16 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
 
   const SettingsPg5 = () => {
     return (
-      
+      <div style={styles.buttonContainer}>
+        <div style={{ marginBottom: '10px',backgroundColor: 'white',height: '220px',borderRadius: '10px' }}>
+          <div style={{ position: 'relative',fontSize: '45px',fontWeight: 'bold',color: 'black',left: '15px',top: '15px'  }}>Units</div>
+          <div style={{ position: 'relative',fontSize: '75px',fontWeight: 'bold',color: 'black',textAlign: 'right',right: '15px',top: '60px' }}>CM</div>
+        </div>
+        <div style={styles.buttonGroup}>
+          <button onClick={() => handleButtonClick('increaseHeight')} style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '288px',height: '140px', fontSize: '60px', fontWeight: 'bold', borderRadius: '25px',backgroundColor: '#9FDD94' }}>CM</button>
+          <button onClick={() => handleButtonClick('decreaseHeight')} style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '288px',height: '140px', fontSize: '60px', fontWeight: 'bold', borderRadius: '25px',backgroundColor: '#444444'}}>IN</button>
+        </div>
+      </div>
     );
   };
 
