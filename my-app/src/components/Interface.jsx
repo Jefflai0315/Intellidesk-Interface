@@ -327,6 +327,28 @@ const Interface = () => {
     }
 };
 
+  // State to keep track of thickness value
+  const [thickness, setThickness] = useState(10);
+
+  // Function to handle increase thickness
+  const handleIncreaseThickness = () => {
+    setThickness(prevThickness => {
+      const newThickness = (prevThickness + 0.01).toFixed(2); // increment by 0.01 and fix to 2 decimal places
+      return parseFloat(newThickness); // Convert string back to float
+    });
+  };
+
+  // Function to handle decrease thickness
+  const handleDecreaseThickness = () => {
+    setThickness(prevThickness => {
+      if (prevThickness > 0.01) { // Check if greater than the minimum increment
+        const newThickness = (prevThickness - 0.01).toFixed(2); // decrement by 0.01 and fix to 2 decimal places
+        return parseFloat(newThickness); // Convert string back to float
+      }
+      return prevThickness; // If already at minimum, return current thickness
+    });
+  };
+
   // State to keep track of sensitivity value
   const [sensitivity, setSensitivity] = useState(1);
 
@@ -663,11 +685,11 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
       <div style={styles.buttonContainer}>
         <div style={{ marginBottom: '10px',backgroundColor: 'white',height: '220px',borderRadius: '10px' }}>
           <div style={{ position: 'relative',fontSize: '45px',fontWeight: 'bold',color: 'black',left: '15px',top: '15px'  }}>Table Thickness</div>
-          <div style={{ position: 'relative',fontSize: '65px',fontWeight: 'bold',color: 'black',textAlign: 'right',right: '15px',top: '70px' }}>XX.XX cm</div>
+          <div style={{ position: 'relative',fontSize: '65px',fontWeight: 'bold',color: 'black',textAlign: 'right',right: '15px',top: '70px' }}>{thickness} cm</div>
         </div>
         <div style={styles.buttonGroup}>
-          <button onClick={() => handleButtonClick('increaseHeight')} style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '288px',height: '140px', fontSize: '50px', borderRadius: '25px',backgroundColor: '#9FDD94' }}>▲</button>
-          <button onClick={() => handleButtonClick('decreaseHeight')} style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '288px',height: '140px', fontSize: '50px', borderRadius: '25px',backgroundColor: '#9FDD94'}}>▼</button>
+          <button onClick={handleIncreaseThickness} style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '288px',height: '140px', fontSize: '50px', borderRadius: '25px',backgroundColor: '#9FDD94' }}>▲</button>
+          <button onClick={handleDecreaseThickness} style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '288px',height: '140px', fontSize: '50px', borderRadius: '25px',backgroundColor: '#9FDD94'}}>▼</button>
         </div>
       </div>
     );
@@ -678,9 +700,7 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
       <div style={styles.buttonContainer}>
         <div style={{ marginBottom: '10px',backgroundColor: 'white',height: '220px',borderRadius: '10px' }}>
           <div style={{ position: 'relative',fontSize: '45px',fontWeight: 'bold',color: 'black',left: '15px',top: '15px'  }}>Sensitivity</div>
-          <div style={{ position: 'relative',fontSize: '75px',fontWeight: 'bold',color: 'black',textAlign: 'right',right: '15px',top: '60px' }}>
-            {sensitivity} 
-          </div>
+          <div style={{ position: 'relative',fontSize: '75px',fontWeight: 'bold',color: 'black',textAlign: 'right',right: '15px',top: '60px' }}>{sensitivity}</div>
         </div>
         <div style={styles.buttonGroup}>
           <button onClick={handleIncreaseSensitivity} style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '288px',height: '140px', fontSize: '50px', borderRadius: '25px',backgroundColor: '#9FDD94' }}>▲</button>
