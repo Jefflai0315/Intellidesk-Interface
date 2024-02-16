@@ -235,6 +235,7 @@ const Interface = () => {
   const [current_user, setCurrentUser] = useState('JARVIS');
   const [postureNudge,setPostureNudge] = useState(false);
   const [videoUrl, setVideoUrl] = useState('');
+  const [heightUnit, setHeightUnit] = useState('');
 
 
   // Retrieve nudging status
@@ -273,7 +274,7 @@ const Interface = () => {
 
 
   useEffect(() => {
-    const postureRef = query(ref(database, `${current_user}/Controls/PostureNudge`));
+    const postureRef = query(ref(database, `Controls/PostureNudge`));
     onValue(postureRef, (snapshot) => {
       const data = snapshot.val();
       console.log(data);
@@ -317,6 +318,15 @@ const Interface = () => {
   // state  for unit toggle
   const [selectedUnit, setSelectedUnit] = useState('CM');
 
+  const cmToINCH = (val) => {
+    return val * 0.393701; // Converts centimeters to inches
+  };
+  
+  const inchToCM = (val) => {
+    return val * 2.54; // Converts inches to centimeters
+  };
+
+
   // Function to handle button click
   const handleButtonClick = (buttonKey) => {
     if (buttonKey === 'lockButton') {
@@ -330,8 +340,10 @@ const Interface = () => {
     }
     if (buttonKey === 'changeCM') {
       setSelectedUnit('CM'); // Set the unit to centimeters
+      
     } else if (buttonKey === 'changeIN') {
       setSelectedUnit('IN'); // Set the unit to inches
+
     }
     // Toggle the button's active state
     setActiveButtons(prevState => ({
@@ -360,10 +372,16 @@ const Interface = () => {
   // State to keep track of thickness value
   const [thickness, setThickness] = useState(10);
 
+  const updateThicknessInFirebase = (newThick) => {
+    const thickRef = ref(database, `Controls/Thickness`);
+    set(thickRef, newThick).catch((error) => {
+      console.error("Error updating thickness in Firebase", error);});
+  };
   // Function to handle increase thickness
   const handleIncreaseThickness = () => {
     setThickness(prevThickness => {
       const newThickness = (prevThickness + 0.01).toFixed(2); // increment by 0.01 and fix to 2 decimal places
+      updateThicknessInFirebase(newThickness);
       return parseFloat(newThickness); // Convert string back to float
     });
   };
@@ -373,6 +391,7 @@ const Interface = () => {
     setThickness(prevThickness => {
       if (prevThickness > 0.01) { // Check if greater than the minimum increment
         const newThickness = (prevThickness - 0.01).toFixed(2); // decrement by 0.01 and fix to 2 decimal places
+        updateThicknessInFirebase(newThickness);
         return parseFloat(newThickness); // Convert string back to float
       }
       return prevThickness; // If already at minimum, return current thickness
@@ -382,17 +401,37 @@ const Interface = () => {
   // State to keep track of sensitivity value
   const [sensitivity, setSensitivity] = useState(1);
 
+  const updateSensInFirebase = (newSens) => {
+    const sensRef = ref(database, `Controls/Sensitivity`);
+    set(sensRef, newSens).catch((error) => {
+      console.error("Error updating sensitivity in Firebase", error);});
+  };
+
   // Function to handle increase sensitivity
   const handleIncreaseSensitivity = () => {
+    if (isLocked) {
+      // If controls are locked, do not allow any other buttons to perform actions
+      return;
+    }
     setSensitivity(prevSensitivity => {
       // If the previous value is less than 4, increment it. Otherwise, keep it at 4.
-      return prevSensitivity < 4 ? prevSensitivity + 1 : 4;
+      const curSens = prevSensitivity < 4 ? prevSensitivity + 1 : 4;
+      updateSensInFirebase(curSens);
+      return curSens;
     });
   };
 
   // Function to handle decrease sensitivity
   const handleDecreaseSensitivity = () => {
-    setSensitivity(prevSensitivity => (prevSensitivity > 1 ? prevSensitivity - 1 : 1)); // Prevents the value going below 1
+    if (isLocked) {
+      // If controls are locked, do not allow any other buttons to perform actions
+      return;
+    }
+    setSensitivity(prevSensitivity => {
+      const curSens = prevSensitivity > 1 ? prevSensitivity - 1 : 1;
+      updateSensInFirebase(curSens);
+      return curSens
+    }); // Prevents the value going below 1
   };
 
   const [activePreset, setActivePreset] = useState(null);
@@ -624,7 +663,7 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
   };
 
   const updateHeightInFirebase = (newHeight) => {
-    const heightRef = ref(database, `${current_user}/Controls/HeightValue`);
+    const heightRef = ref(database, `Controls/HeightValue`);
     set(heightRef, newHeight).catch((error) => {
       console.error("Error updating height in Firebase", error);});
   };
