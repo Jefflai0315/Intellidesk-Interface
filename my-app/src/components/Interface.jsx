@@ -202,7 +202,6 @@ const Interface = () => {
 
   const handlePageSelect = (pageIndex) => {
     setScreenIndex(pageIndex);
-
   };
 
   // Handler functions for swipe actions
@@ -315,6 +314,9 @@ const Interface = () => {
   // lock button components
   const [isLocked, setIsLocked] = useState(false);
 
+  // state  for unit toggle
+  const [selectedUnit, setSelectedUnit] = useState('CM');
+
   // Function to handle button click
   const handleButtonClick = (buttonKey) => {
     if (buttonKey === 'lockButton') {
@@ -325,6 +327,11 @@ const Interface = () => {
     if (isLocked) {
       // If controls are locked, do not allow any other buttons to perform actions
       return;
+    }
+    if (buttonKey === 'changeCM') {
+      setSelectedUnit('CM'); // Set the unit to centimeters
+    } else if (buttonKey === 'changeIN') {
+      setSelectedUnit('IN'); // Set the unit to inches
     }
     // Toggle the button's active state
     setActiveButtons(prevState => ({
@@ -339,7 +346,54 @@ const Interface = () => {
     if (buttonKey !== 'offCam' && buttonKey !== 'offCharge' && !activeButtons[buttonKey] && buttonKey !== 'lockButton' && buttonKey !== 'modeButton') {
         handlePreset(presets[buttonKey]);
     }
+    // Call handlePreset only for specific buttons and if they are being activated
+    if (buttonKey in presets) { // Check if buttonKey is a property in presets
+      const presetHeight = presets[buttonKey];
+      if (typeof presetHeight === 'number') { // Make sure it is a number
+        handlePreset(presetHeight);
+      } else {
+        console.error('Preset height is not a number:', presetHeight);
+      }
+    }
 };
+
+  // State to keep track of thickness value
+  const [thickness, setThickness] = useState(10);
+
+  // Function to handle increase thickness
+  const handleIncreaseThickness = () => {
+    setThickness(prevThickness => {
+      const newThickness = (prevThickness + 0.01).toFixed(2); // increment by 0.01 and fix to 2 decimal places
+      return parseFloat(newThickness); // Convert string back to float
+    });
+  };
+
+  // Function to handle decrease thickness
+  const handleDecreaseThickness = () => {
+    setThickness(prevThickness => {
+      if (prevThickness > 0.01) { // Check if greater than the minimum increment
+        const newThickness = (prevThickness - 0.01).toFixed(2); // decrement by 0.01 and fix to 2 decimal places
+        return parseFloat(newThickness); // Convert string back to float
+      }
+      return prevThickness; // If already at minimum, return current thickness
+    });
+  };
+
+  // State to keep track of sensitivity value
+  const [sensitivity, setSensitivity] = useState(1);
+
+  // Function to handle increase sensitivity
+  const handleIncreaseSensitivity = () => {
+    setSensitivity(prevSensitivity => {
+      // If the previous value is less than 4, increment it. Otherwise, keep it at 4.
+      return prevSensitivity < 4 ? prevSensitivity + 1 : 4;
+    });
+  };
+
+  // Function to handle decrease sensitivity
+  const handleDecreaseSensitivity = () => {
+    setSensitivity(prevSensitivity => (prevSensitivity > 1 ? prevSensitivity - 1 : 1)); // Prevents the value going below 1
+  };
 
   const [activePreset, setActivePreset] = useState(null);
   const handlePreset = (preset) => {
@@ -412,14 +466,12 @@ const Interface = () => {
   // PageIndicator component
   const PageIndicator = ({ totalPages, currentPage, onPageSelect }) => (
     <div style={{ display: 'flex', justifyContent: 'center' }}>
-      
       {Array.from({ length: totalPages }, (_, index) => (
         <Dot
           key={index}
           isActive={index === currentPage}
           onClick={() => onPageSelect(index)}
         />
-
       ))}
     </div>
   );
@@ -563,8 +615,12 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
   };
 
   const applyPreset = (presetHeight) => {
-    setHeight(presetHeight.toFixed(1));
-    updateHeightInFirebase(presetHeight);
+    if (presetHeight !== undefined && !isNaN(presetHeight)) {
+      setHeight(presetHeight.toFixed(1));
+      updateHeightInFirebase(presetHeight);
+    } else {
+      console.error('Invalid preset height:', presetHeight);
+    }
   };
 
   const updateHeightInFirebase = (newHeight) => {
@@ -601,7 +657,6 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
   const handleSettingsToggle = () => {
     setCurrentSettingsPg(prevPg => {
       const newPg = prevPg === 'pg1' ? 'pg2' : prevPg === 'pg2' ? 'pg3' : prevPg === 'pg3' ? 'pg4' : prevPg === 'pg4' ? 'pg5' : 'pg1';
-      console.log("Settings Pg: ", newPg); // Debugging line
       return newPg;
     });
   };
@@ -638,56 +693,34 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
   const SettingsPg2 = () => {
     return (
       <div style={styles.buttonContainer}>
-        <div style={styles.buttonGroup}>
-          <button onClick={() => handleButtonClick('offCharge')} style={getButtonStyleC('offCharge')}>
-            {
-              activeButtons['offCharge']
-              ? <img src={chargeGreenOff} alt="Charge Icon Off" style={styles.icon} />
-              : <img src={chargeGreen} alt="Charge Icon" style={styles.icon} />
-            }
-          </button>
-          <button onClick={() => handleButtonClick('offCam')} style={getButtonStyleC('offCam')}>
-            {
-              activeButtons['offCam']
-              ? <img src={camGreenOff} alt="Cam Icon Off" style={{ width: '120px', height: '100px' }} />
-              : <img src={camGreen} alt="Cam Icon" style={{ width: '120px', height: '100px' }} />
-            }
-          </button>
+        <div style={{ marginBottom: '10px',backgroundColor: 'white',height: '220px',borderRadius: '10px' }}>
+          <div style={{ position: 'relative',fontSize: '45px',fontWeight: 'bold',color: 'black',left: '15px',top: '15px'  }}>Fixed Height</div>
+          <div style={{ position: 'relative',fontSize: '45px',fontWeight: 'bold',color: 'black',left: '15px',top: '15px' }}>1</div>
+          <div style={{ position: 'relative',fontSize: '65px',fontWeight: 'bold',color: 'black',textAlign: 'right',right: '15px',top: '20px' }}>XXX.XX cm</div>
         </div>
-        {/* <div className="controls" style={styles.buttonGroup}>
-          <button onClick={() => handleButtonClick('sitting')} style={getButtonStyleP(presets.sitting)}>1</button>
-          <button onClick={() => handleButtonClick('standing')} style={getButtonStyleP(presets.standing)}>2</button>
-          <button onClick={() => handleButtonClick('elevated1')} style={getButtonStyleP(presets.elevated1)}>3</button>
-          <button onClick={() => handleButtonClick('elevated2')} style={getButtonStyleP(presets.elevated2)}>4</button>
-        </div> */}
+        <div style={styles.buttonGroup}>
+          <button onClick={() => handleButtonClick('increaseHeight')} style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '110px',height: '140px', fontSize: '50px', borderRadius: '25px',backgroundColor: '#9FDD94' }}>▲</button>
+          <div>
+            <button onClick={() => handleButtonClick('presetHeight')} style={{ marginBottom: '10px',backgroundColor: '#444444',height: '140px',width:'347.5px',borderRadius: '25px' }}>
+              <div style={{ position: 'relative',fontSize: '55px',fontWeight: 'bold',color: 'white' }}>Height 1</div>
+            </button>
+          </div>
+          <button onClick={() => handleButtonClick('decreaseHeight')} style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '110px',height: '140px', fontSize: '50px', borderRadius: '25px',backgroundColor: '#9FDD94'}}>▼</button>
+        </div>
       </div>
     );
   };
   const SettingsPg3 = () => {
     return (
       <div style={styles.buttonContainer}>
-        <div style={styles.buttonGroup}>
-          <button onClick={() => handleButtonClick('offCharge')} style={getButtonStyleC('offCharge')}>
-            {
-              activeButtons['offCharge']
-              ? <img src={chargeGreenOff} alt="Charge Icon Off" style={styles.icon} />
-              : <img src={chargeGreen} alt="Charge Icon" style={styles.icon} />
-            }
-          </button>
-          {/* <button onClick={() => handleButtonClick('offCam')} style={getButtonStyleC('offCam')}>
-            {
-              activeButtons['offCam']
-              ? <img src={camGreenOff} alt="Cam Icon Off" style={{ width: '120px', height: '100px' }} />
-              : <img src={camGreen} alt="Cam Icon" style={{ width: '120px', height: '100px' }} />
-            }
-          </button> */}
+        <div style={{ marginBottom: '10px',backgroundColor: 'white',height: '220px',borderRadius: '10px' }}>
+          <div style={{ position: 'relative',fontSize: '45px',fontWeight: 'bold',color: 'black',left: '15px',top: '15px'  }}>Table Thickness</div>
+          <div style={{ position: 'relative',fontSize: '65px',fontWeight: 'bold',color: 'black',textAlign: 'right',right: '15px',top: '70px' }}>{thickness} cm</div>
         </div>
-        {/* <div className="controls" style={styles.buttonGroup}>
-          <button onClick={() => handleButtonClick('sitting')} style={getButtonStyleP(presets.sitting)}>1</button>
-          <button onClick={() => handleButtonClick('standing')} style={getButtonStyleP(presets.standing)}>2</button>
-          <button onClick={() => handleButtonClick('elevated1')} style={getButtonStyleP(presets.elevated1)}>3</button>
-          <button onClick={() => handleButtonClick('elevated2')} style={getButtonStyleP(presets.elevated2)}>4</button>
-        </div> */}
+        <div style={styles.buttonGroup}>
+          <button onClick={handleIncreaseThickness} style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '288px',height: '140px', fontSize: '50px', borderRadius: '25px',backgroundColor: '#9FDD94' }}>▲</button>
+          <button onClick={handleDecreaseThickness} style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '288px',height: '140px', fontSize: '50px', borderRadius: '25px',backgroundColor: '#9FDD94'}}>▼</button>
+        </div>
       </div>
     );
   };
@@ -695,29 +728,14 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
   const SettingsPg4 = () => {
     return (
       <div style={styles.buttonContainer}>
-        <div style={styles.buttonGroup}>
-          <button onClick={() => handleButtonClick('offCharge')} style={getButtonStyleC('offCharge')}>
-            {
-              activeButtons['offCharge']
-              ? <img src={chargeGreenOff} alt="Charge Icon Off" style={styles.icon} />
-              : <img src={chargeGreen} alt="Charge Icon" style={styles.icon} />
-            }
-          </button>
-          {/* <button onClick={() => handleButtonClick('offCam')} style={getButtonStyleC('offCam')}>
-            {
-              activeButtons['offCam']
-              ? <img src={camGreenOff} alt="Cam Icon Off" style={{ width: '120px', height: '100px' }} />
-              : <img src={camGreen} alt="Cam Icon" style={{ width: '120px', height: '100px' }} />
-            }
-          </button> */}
+        <div style={{ marginBottom: '10px',backgroundColor: 'white',height: '220px',borderRadius: '10px' }}>
+          <div style={{ position: 'relative',fontSize: '45px',fontWeight: 'bold',color: 'black',left: '15px',top: '15px'  }}>Sensitivity</div>
+          <div style={{ position: 'relative',fontSize: '75px',fontWeight: 'bold',color: 'black',textAlign: 'right',right: '15px',top: '60px' }}>{sensitivity}</div>
         </div>
-        {/* <div className="controls" style={styles.buttonGroup}>
-          <button onClick={() => handleButtonClick('sitting')} style={getButtonStyleP(presets.sitting)}>1</button>
-          <button onClick={() => handleButtonClick('standing')} style={getButtonStyleP(presets.standing)}>2</button>
-          <button onClick={() => handleButtonClick('elevated1')} style={getButtonStyleP(presets.elevated1)}>3</button>
-          <button onClick={() => handleButtonClick('elevated2')} style={getButtonStyleP(presets.elevated2)}>4</button>
-        </div> */}
-        4
+        <div style={styles.buttonGroup}>
+          <button onClick={handleIncreaseSensitivity} style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '288px',height: '140px', fontSize: '50px', borderRadius: '25px',backgroundColor: '#9FDD94' }}>▲</button>
+          <button onClick={handleDecreaseSensitivity} style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '288px',height: '140px', fontSize: '50px', borderRadius: '25px',backgroundColor: '#9FDD94'}}>▼</button>
+        </div>
       </div>
     );
   };
@@ -725,34 +743,49 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
   const SettingsPg5 = () => {
     return (
       <div style={styles.buttonContainer}>
-        <div style={styles.buttonGroup}>
-          <button onClick={() => handleButtonClick('offCharge')} style={getButtonStyleC('offCharge')}>
-            {
-              activeButtons['offCharge']
-              ? <img src={chargeGreenOff} alt="Charge Icon Off" style={styles.icon} />
-              : <img src={chargeGreen} alt="Charge Icon" style={styles.icon} />
-            }
-          </button>
-          {/* <button onClick={() => handleButtonClick('offCam')} style={getButtonStyleC('offCam')}>
-            {
-              activeButtons['offCam']
-              ? <img src={camGreenOff} alt="Cam Icon Off" style={{ width: '120px', height: '100px' }} />
-              : <img src={camGreen} alt="Cam Icon" style={{ width: '120px', height: '100px' }} />
-            }
-          </button> */}
+        <div style={{ marginBottom: '10px',backgroundColor: 'white',height: '220px',borderRadius: '10px' }}>
+          <div style={{ position: 'relative',fontSize: '45px',fontWeight: 'bold',color: 'black',left: '15px',top: '15px'  }}>Units</div>
+          <div style={{ position: 'relative',fontSize: '75px',fontWeight: 'bold',color: 'black',textAlign: 'right',right: '15px',top: '60px' }}>{selectedUnit}</div>
         </div>
-        {/* <div className="controls" style={styles.buttonGroup}>
-          <button onClick={() => handleButtonClick('sitting')} style={getButtonStyleP(presets.sitting)}>1</button>
-          <button onClick={() => handleButtonClick('standing')} style={getButtonStyleP(presets.standing)}>2</button>
-          <button onClick={() => handleButtonClick('elevated1')} style={getButtonStyleP(presets.elevated1)}>3</button>
-          <button onClick={() => handleButtonClick('elevated2')} style={getButtonStyleP(presets.elevated2)}>4</button>
-        </div> */}
-        5
+        <div style={styles.buttonGroup}>
+          <button
+            onClick={() => handleButtonClick('changeCM')}
+            style={{
+              ...styles.boldButton,
+              backgroundColor: selectedUnit === 'CM' ? '#9FDD94' : '#444444', // Toggle color based on selection
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              width: '288px',
+              height: '140px', 
+              fontSize: '60px', 
+              fontWeight: 'bold', 
+              borderRadius: '25px',
+            }}
+          >
+            CM
+          </button>
+          <button
+            onClick={() => handleButtonClick('changeIN')}
+            style={{
+              ...styles.boldButton,
+              backgroundColor: selectedUnit === 'IN' ? '#9FDD94' : '#444444', // Toggle color based on selection
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              width: '288px',
+              height: '140px', 
+              fontSize: '60px', 
+              fontWeight: 'bold', 
+              borderRadius: '25px',
+            }}
+          >
+            IN
+          </button>
+        </div>
       </div>
     );
   };
-
-  console.log("Button Style:", getButtonStyleForTheme(settingsPg));
 
   return (
     <div {...swipeHandlers} >
