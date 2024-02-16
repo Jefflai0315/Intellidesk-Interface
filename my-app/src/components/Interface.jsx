@@ -51,7 +51,7 @@ const Clock = ({ style }) => {
 
 const Interface = () => {
   const [settingsPg, setCurrentSettingsPg] = useState('pg1'); 
-
+  
   const styles = {
     container: {
       display: 'flex',
@@ -199,6 +199,33 @@ const Interface = () => {
     SitStandGradient: 'linear-gradient(to right, red, yellow, green)',
     EyeScreenGradient: 'linear-gradient(to right, green, yellow, red)',
   };
+
+  // State to control the visibility of the notification glow
+  const [isNotifying, setIsNotifying] = useState(false);
+  // Inline style for the glowing effect
+  const glowStyle = {
+    boxShadow: isNotifying ? 'inset 0 0 45px 20px rgba(145, 232, 130)' : 'none',
+    transition: 'box-shadow 0.5s ease-in-out',
+    // Add other styles as necessary
+  };
+  const containerStyleWithGlow = {
+    ...styles.container,
+    ...glowStyle,
+  };
+
+  // Trigger the notification effect
+  const triggerNotification = () => {
+    setIsNotifying(true);
+    setTimeout(() => {
+      setIsNotifying(false);
+    }, 3000); // 3 seconds duration
+  };
+
+  // Example button to trigger the notification ( MODIFY TO ACCEPT STATE FROM FIREBASE)
+  useEffect(() => {
+    // Automatically trigger notification for demonstration
+    triggerNotification();
+  }, []);
 
   const handlePageSelect = (pageIndex) => {
     setScreenIndex(pageIndex);
@@ -664,18 +691,18 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
     return (
       <div style={styles.buttonContainer}>
         <div style={{ marginBottom: '10px',backgroundColor: 'white',height: '220px',borderRadius: '10px' }}>
-          <div style={{ position: 'relative',fontSize: '45px',fontWeight: 'bold',color: 'black',left: '15px',top: '15px'  }}>Fixed Height</div>
-          <div style={{ position: 'relative',fontSize: '45px',fontWeight: 'bold',color: 'black',left: '15px',top: '15px' }}>1</div>
-          <div style={{ position: 'relative',fontSize: '65px',fontWeight: 'bold',color: 'black',textAlign: 'right',right: '15px',top: '20px' }}>XXX.XX cm</div>
+          <div style={{ position: 'relative',fontFamily: 'Open Sans, sans-serif',fontSize: '45px',fontWeight: 'bold',color: 'black',left: '15px',top: '15px'  }}>Fixed Height</div>
+          <div style={{ position: 'relative',fontFamily: 'Open Sans, sans-serif',fontSize: '45px',fontWeight: 'bold',color: 'black',left: '15px',top: '15px' }}>1</div>
+          <div style={{ position: 'relative',fontFamily: 'Open Sans, sans-serif',fontSize: '65px',fontWeight: 'bold',color: 'black',textAlign: 'right',right: '15px',top: '20px' }}>XXX.XX cm</div>
         </div>
         <div style={styles.buttonGroup}>
-          <button onClick={() => handleButtonClick('increaseHeight')} style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '110px',height: '140px', fontSize: '50px', borderRadius: '25px',backgroundColor: '#9FDD94' }}>▲</button>
+          <button onClick={() => handleButtonClick('increaseHeight')} style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '110px',height: '140px',fontFamily: 'Open Sans, sans-serif', fontSize: '50px', borderRadius: '25px',backgroundColor: '#9FDD94' }}>▲</button>
           <div>
-            <button onClick={() => handleButtonClick('presetHeight')} style={{ marginBottom: '10px',backgroundColor: '#444444',height: '140px',width:'347.5px',borderRadius: '25px' }}>
-              <div style={{ position: 'relative',fontSize: '55px',fontWeight: 'bold',color: 'white' }}>Height 1</div>
+            <button onClick={() => handleButtonClick('presetHeight')} style={{ backgroundColor: '#444444',height: '140px',width:'347.5px',borderRadius: '25px' }}>
+              <div style={{ position: 'relative',fontFamily: 'Open Sans, sans-serif',fontSize: '55px',fontWeight: 'bold',color: 'white' }}>Height 1</div>
             </button>
           </div>
-          <button onClick={() => handleButtonClick('decreaseHeight')} style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '110px',height: '140px', fontSize: '50px', borderRadius: '25px',backgroundColor: '#9FDD94'}}>▼</button>
+          <button onClick={() => handleButtonClick('decreaseHeight')} style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '110px',height: '140px',fontFamily: 'Open Sans, sans-serif', fontSize: '50px', borderRadius: '25px',backgroundColor: '#9FDD94'}}>▼</button>
         </div>
       </div>
     );
@@ -684,12 +711,12 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
     return (
       <div style={styles.buttonContainer}>
         <div style={{ marginBottom: '10px',backgroundColor: 'white',height: '220px',borderRadius: '10px' }}>
-          <div style={{ position: 'relative',fontSize: '45px',fontWeight: 'bold',color: 'black',left: '15px',top: '15px'  }}>Table Thickness</div>
-          <div style={{ position: 'relative',fontSize: '65px',fontWeight: 'bold',color: 'black',textAlign: 'right',right: '15px',top: '70px' }}>{thickness} cm</div>
+          <div style={{ position: 'relative',fontFamily: 'Open Sans, sans-serif',fontSize: '45px',fontWeight: 'bold',color: 'black',left: '15px',top: '15px'  }}>Table Thickness</div>
+          <div style={{ position: 'relative',fontFamily: 'Open Sans, sans-serif',fontSize: '65px',fontWeight: 'bold',color: 'black',textAlign: 'right',right: '15px',top: '70px' }}>{thickness} cm</div>
         </div>
         <div style={styles.buttonGroup}>
-          <button onClick={handleIncreaseThickness} style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '288px',height: '140px', fontSize: '50px', borderRadius: '25px',backgroundColor: '#9FDD94' }}>▲</button>
-          <button onClick={handleDecreaseThickness} style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '288px',height: '140px', fontSize: '50px', borderRadius: '25px',backgroundColor: '#9FDD94'}}>▼</button>
+          <button onClick={handleIncreaseThickness} style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '288px',height: '140px',fontFamily: 'Open Sans, sans-serif', fontSize: '50px', borderRadius: '25px',backgroundColor: '#9FDD94' }}>▲</button>
+          <button onClick={handleDecreaseThickness} style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '288px',height: '140px',fontFamily: 'Open Sans, sans-serif', fontSize: '50px', borderRadius: '25px',backgroundColor: '#9FDD94'}}>▼</button>
         </div>
       </div>
     );
@@ -699,12 +726,12 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
     return (
       <div style={styles.buttonContainer}>
         <div style={{ marginBottom: '10px',backgroundColor: 'white',height: '220px',borderRadius: '10px' }}>
-          <div style={{ position: 'relative',fontSize: '45px',fontWeight: 'bold',color: 'black',left: '15px',top: '15px'  }}>Sensitivity</div>
-          <div style={{ position: 'relative',fontSize: '75px',fontWeight: 'bold',color: 'black',textAlign: 'right',right: '15px',top: '60px' }}>{sensitivity}</div>
+          <div style={{ position: 'relative',fontFamily: 'Open Sans, sans-serif',fontSize: '45px',fontWeight: 'bold',color: 'black',left: '15px',top: '15px'  }}>Sensitivity</div>
+          <div style={{ position: 'relative',fontFamily: 'Open Sans, sans-serif',fontSize: '75px',fontWeight: 'bold',color: 'black',textAlign: 'right',right: '15px',top: '60px' }}>{sensitivity}</div>
         </div>
         <div style={styles.buttonGroup}>
-          <button onClick={handleIncreaseSensitivity} style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '288px',height: '140px', fontSize: '50px', borderRadius: '25px',backgroundColor: '#9FDD94' }}>▲</button>
-          <button onClick={handleDecreaseSensitivity} style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '288px',height: '140px', fontSize: '50px', borderRadius: '25px',backgroundColor: '#9FDD94'}}>▼</button>
+          <button onClick={handleIncreaseSensitivity} style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '288px',height: '140px',fontFamily: 'Open Sans, sans-serif', fontSize: '50px', borderRadius: '25px',backgroundColor: '#9FDD94' }}>▲</button>
+          <button onClick={handleDecreaseSensitivity} style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '288px',height: '140px',fontFamily: 'Open Sans, sans-serif', fontSize: '50px', borderRadius: '25px',backgroundColor: '#9FDD94'}}>▼</button>
         </div>
       </div>
     );
@@ -714,8 +741,8 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
     return (
       <div style={styles.buttonContainer}>
         <div style={{ marginBottom: '10px',backgroundColor: 'white',height: '220px',borderRadius: '10px' }}>
-          <div style={{ position: 'relative',fontSize: '45px',fontWeight: 'bold',color: 'black',left: '15px',top: '15px'  }}>Units</div>
-          <div style={{ position: 'relative',fontSize: '75px',fontWeight: 'bold',color: 'black',textAlign: 'right',right: '15px',top: '60px' }}>{selectedUnit}</div>
+          <div style={{ position: 'relative',fontFamily: 'Open Sans, sans-serif',fontSize: '45px',fontWeight: 'bold',color: 'black',left: '15px',top: '15px'  }}>Units</div>
+          <div style={{ position: 'relative',fontFamily: 'Open Sans, sans-serif',fontSize: '75px',fontWeight: 'bold',color: 'black',textAlign: 'right',right: '15px',top: '60px' }}>{selectedUnit}</div>
         </div>
         <div style={styles.buttonGroup}>
           <button
@@ -730,6 +757,7 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
               height: '140px', 
               fontSize: '60px', 
               fontWeight: 'bold', 
+              fontFamily: 'Open Sans, sans-serif',
               borderRadius: '25px',
             }}
           >
@@ -747,6 +775,7 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
               height: '140px', 
               fontSize: '60px', 
               fontWeight: 'bold', 
+              fontFamily: 'Open Sans, sans-serif',
               borderRadius: '25px',
             }}
           >
@@ -764,7 +793,7 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
         <PageIndicator totalPages={totalPages} currentPage={screenIndex} onPageSelect={handlePageSelect} />
       </div>
       {screenIndex === 0 && (
-        <div style={styles.container}>
+        <div style={containerStyleWithGlow}>
           <div style={{ position: 'relative', height: '100%', width: '30%', top: '10px', left: '10px' }}>
             <img src={logoImg} alt="Intellidesk Logo" style={{ width: '286px', height: 'auto' }} />
             <div >{postureNudge && <IoIosBody style={{ color: '#EE5757', top: '10px', left: '10px' }}/>}</div>
@@ -775,6 +804,7 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
               <div style={{ color: '#9FDD94', fontSize: '110px' }}>{height}</div>
               <div style={{ fontSize: '45px' }}>CM</div>
             </div>
+            <button onClick={triggerNotification}></button>
           </div>
           <div style={{...styles.buttonGroup, width: '40%', margin: 0}}>
             <div style={{...styles.buttonContainer, width: 'fit-content'}}>
@@ -821,12 +851,13 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
       )}
       {screenIndex === 1 && (
         // Your second screen JSX
-      <div style={styles.container}>
+      <div style={containerStyleWithGlow}>
         <div style={{ position: 'relative', height: '100%', width: '24%', top: '10px', left: '10px' }}>
           <img src={logoImg} alt="Intellidesk Logo" style={{ width: '286px', height: 'auto' }} />
           <div >{postureNudge && <IoIosBody style={{ color: '#EE5757', top: '10px', left: '10px' }}/>}</div>
           <div style={styles.horizontalLine}></div>
           <div style={{ fontSize: '50px', color: '#9FDD94'}}> {current_user} </div>
+          <button onClick={triggerNotification}></button>
         </div>
         {/* <div style={styles.buttonContainer}>
         <div style={styles.label}>{isStanding ? 'Stand Time' : 'Sit Time'}</div>
@@ -873,7 +904,7 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
       )}
       {screenIndex === 2 && (
         // Your second screen JSX
-        <div style={styles.container}>
+        <div style={containerStyleWithGlow}>
         <div style={{ position: 'relative', height: '100%', width: '54.5%', top: '10px', left: '10px' }}>
           <img src={logoImg} alt="Intellidesk Logo" style={{ width: '286px', height: 'auto' }} />
           <div >{postureNudge && <IoIosBody style={{ color: '#EE5757', top: '10px', left: '10px' }}/>}</div>
@@ -882,6 +913,7 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
           <Clock style={{ position: 'absolute', top: '150px', left: '40px', fontSize: '130px', fontFamily: 'Open Sans, sans-serif' }}/>
         </div>
         <div style={styles.verticalLine}></div>
+        <button onClick={triggerNotification}></button>
         <div style={{ position: 'relative', height: '100%', width: '55%', top: '10px', left: '10px' }}>
           {/* <Clock style={{ position: 'absolute', top: '0', left: '0' }}/> */}
         </div>
