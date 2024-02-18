@@ -274,19 +274,19 @@ const Interface = () => {
         setPostureNudge(true);
         switch (data) {
           case "1":
-            setVideoUrl("/assets/videos/stand_va.mp4");
+            setVideoUrl("/assets/videos/stand_crop.mp4");
             break
           case "2":
-            setVideoUrl("/assets/videos/back_pain_va.mp4");
+            setVideoUrl("/assets/videos/back_pain_crop.mp4");
             break
           case "3":
-            setVideoUrl("/assets/videos/eye_dist_va.mp4");
+            setVideoUrl("/assets/videos/eye_dist_crop.mp4");
             break
         }
       }
       else {
         setPostureNudge(false);
-        setVideoUrl("/assets/videos/idle_va.mp4");
+        setVideoUrl("/assets/videos/idle_crop.mp4");
       }
     });
   }, [screenIndex]);
@@ -942,7 +942,7 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
           autoPlay 
           loop
           style={{
-            width: '90%',
+            width: '100%',
             height: '250px', 
             backgroundColor: 'transparent', 
             border: 'none', 
@@ -1012,7 +1012,7 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
             autoPlay 
             loop
             style={{
-              width: '87%',
+              width: '50%',
               height: 'auto', 
               backgroundColor: 'transparent', 
               border: 'none', 
