@@ -251,7 +251,7 @@ const Interface = () => {
   // const [gradient, setGradient] = useState('');
 
   const [screenIndex, setScreenIndex] = useState(0);
-  const [height, setHeight] = useState('180.0');
+  const [height, setHeight] = useState('180');
   const [averageDistance, setAverageDistance] = useState(0);
   const [sitStandProgress, setSitStandProgress] = useState(100);
   const [isStanding, setIsStanding] = useState(true);
@@ -882,7 +882,7 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
       return;
     }
     setHeight(prevHeight => {
-      const newHeight = (parseFloat(prevHeight) + 0.1).toFixed(1);
+      const newHeight = (parseFloat(prevHeight) + 1).toFixed(0);
       updateHeightInFirebase(newHeight);
       return newHeight;
     });
@@ -894,7 +894,7 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
       return;
     }
     setHeight(prevHeight => {
-      const newHeight = (parseFloat(prevHeight) - 0.1).toFixed(1);
+      const newHeight = (parseFloat(prevHeight) - 1).toFixed(0);
       updateHeightInFirebase(newHeight);
       return newHeight;
     });
