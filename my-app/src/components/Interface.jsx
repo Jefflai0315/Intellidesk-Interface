@@ -218,18 +218,10 @@ const Interface = () => {
     setIsNotifying(true);
     setTimeout(() => {
       setIsNotifying(false);
-    }, 3000); // 3 seconds duration
+    }, 5000); // 5 seconds duration
   };
 
-  // Example button to trigger the notification ( MODIFY TO ACCEPT STATE FROM FIREBASE)
-  useEffect(() => {
-    // Automatically trigger notification for demonstration
-    triggerNotification();
-  }, []);
-
-  const handlePageSelect = (pageIndex) => {
-    setScreenIndex(pageIndex);
-  };
+  
 
   // Handler functions for swipe actions
   // const handleSwipedLeft = () => setScreenIndex((prev) => prev + 1);
@@ -264,6 +256,25 @@ const Interface = () => {
   const [videoUrl, setVideoUrl] = useState('');
   const [heightUnit, setHeightUnit] = useState('CM');
   const [thickUnit, setThickUnit] = useState('CM')
+  const [currentValue, setCurrentValue] = useState(1)
+  const [currentValueConfig, setCurrentValueConfig] = useState(1)
+
+  // Example button to trigger the notification ( MODIFY TO ACCEPT STATE FROM FIREBASE)
+  useEffect(() => {
+    if (postureNudge) {
+      const intervalId = setInterval(() => {
+        // Toggle the notification state to create a blinking effect
+        triggerNotification();
+      }, 5000); // 5000 milliseconds = 5 seconds
+  
+      // Clean up interval on component unmount or if postureNudge becomes 0
+      // return () => clearInterval(intervalId);
+    }
+  }, [postureNudge]);
+
+  const handlePageSelect = (pageIndex) => {
+    setScreenIndex(pageIndex);
+  };
 
   // const presets = {
   //   sitting: 120.0,
@@ -272,11 +283,13 @@ const Interface = () => {
   //   elevated2: 200.0,
   // };
   const [presets, setPresets] = useState({
-    sitting: 120.0,
-    standing: 150.0,
-    elevated1: 180.0,
-    elevated2: 200.0,
+    1: 120.0,
+    2: 150.0,
+    3: 180.0,
+    4: 200.0,
   });
+
+  
   
 
 
@@ -289,15 +302,16 @@ const Interface = () => {
         setPostureNudge(true);
         switch (data) {
           case "1":
-            setVideoUrl("/assets/videos/stand_va.mp4");
-            break
-          case "2":
             setVideoUrl("/assets/videos/back_pain_va.mp4");
             break
-          case "3":
+          case "2":
             setVideoUrl("/assets/videos/eye_dist_va.mp4");
             break
+          case "3":
+            setVideoUrl("/assets/videos/stand_va.mp4");
+            break
         }
+        triggerNotification();
       }
       else {
         setPostureNudge(false);
@@ -349,21 +363,21 @@ const Interface = () => {
         setThickness(snapshot.val());
       });
 
-      const presetsRef = ref(database, `${current_user}/Controls`);
+      // const presetsRef = ref(database, `${current_user}/Controls`);
 
-      onValue(presetsRef, (snapshot) => {
-        const data = snapshot.val();
-        console.log(data)
-        if (data) {
-          const newPresets = {
-            sitting: data.preset1,
-            standing: data.preset2,
-            elevated1: data.preset3,
-            elevated2: data.preset4,
-          };
-          setPresets(newPresets);
-        }
-      });
+      // onValue(presetsRef, (snapshot) => {
+      //   const data = snapshot.val();
+      //   console.log(data)
+      //   if (data) {
+      //     const newPresets = {
+      //       sitting: data.preset1,
+      //       standing: data.preset2,
+      //       elevated1: data.preset3,
+      //       elevated2: data.preset4,
+      //     };
+      //     setPresets(newPresets);
+      //   }
+      // });
 
     };
   
@@ -384,6 +398,33 @@ const Interface = () => {
       }
     });
   }, [screenIndex]);
+
+  useEffect(() => {
+  const presetRef = query(ref(database,'/Controls/'));
+  onValue(presetRef, (snapshot) => {
+    const data = snapshot.val();
+    const currValueConf = data[currentValue]
+    setCurrentValueConfig(currValueConf);
+    for (let i = 1; i < 5; i++) {
+      setPresets((prevPresets) => ({
+        ...prevPresets,
+        [i]: data[i],
+      }));
+    }
+  }
+  );
+    // const presetHeightRef = query(ref(database, `Controls/`+currentValue));
+    // onValue(presetHeightRef, (snapshot) => {
+    //   const data = snapshot.val();
+      
+    //   setCurrentValueConfig(data);
+    //   setPresets((prevPresets) => ({
+    //     ...prevPresets,
+    //     [currentValue]: data,
+    //   }));
+      
+    // });
+  }, [currentValue]);
 
   
   // Firebase data fetching and processing for posture
@@ -417,11 +458,11 @@ const Interface = () => {
   const [selectedUnit, setSelectedUnit] = useState('CM');
 
   const cmToINCH = (val) => {
-    return Number((val * 0.393701).toFixed(1)); // Converts centimeters to inches and rounds to 1 decimal place
+    return Number((val * 0.393701).toFixed(0)); // Converts centimeters to inches and rounds to 1 decimal place
   };
   
   const inchToCM = (val) => {
-    return Number((val * 2.54).toFixed(1)); // Converts inches to centimeters and rounds to 1 decimal place
+    return Number((val * 2.54).toFixed(0)); // Converts inches to centimeters and rounds to 1 decimal place
   };
 
   const updateButtonStateInFirebase = (buttonKey, state) => {
@@ -476,7 +517,24 @@ const Interface = () => {
       } else {
         console.error('Preset height is not a number:', presetHeight);
       }
-    } else {
+    } else if (buttonKey === 'presetHeight'){
+      const currentV = currentValue === 4 ? 1 : currentValue + 1;
+      setCurrentValue(currentV);
+
+    } else if (buttonKey === 'increaseHeight'){
+      setCurrentValueConfig(prevConfig => {
+        const newConfig = parseFloat((prevConfig + 1).toFixed(0));
+        updatePresetInFirebase(newConfig,currentValue);
+        return newConfig;
+      });
+    
+    } else if (buttonKey === 'decreaseHeight'){
+      setCurrentValueConfig(prevConfig => {
+        const newConfig = parseFloat((prevConfig - 1).toFixed(0));
+        updatePresetInFirebase(newConfig,currentValue);
+        return newConfig;
+      });
+    }else {
       setActiveButtons(prevState => ({ ...prevState, [buttonKey]: !prevState[buttonKey] }));
       setActiveStates(prevActiveStates => ({ ...prevActiveStates, [buttonKey]: !prevActiveStates[buttonKey] }));
     }
@@ -863,7 +921,7 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
 
   const applyPreset = (presetHeight) => {
     if (presetHeight !== undefined && !isNaN(presetHeight)) {
-      setHeight(presetHeight.toFixed(1));
+      setHeight(presetHeight.toFixed(0));
       updateHeightInFirebase(presetHeight);
     } else {
       console.error('Invalid preset height:', presetHeight);
@@ -873,6 +931,14 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
   const updateHeightInFirebase = (newHeight) => {
     const heightRef = ref(database, `Controls/HeightValue`);
     set(heightRef, newHeight).catch((error) => {
+      console.error("Error updating height in Firebase", error);});
+  };
+
+  const updatePresetInFirebase = (newPreset, index) => {
+    const heightRef = ref(database, `Controls/` + index);
+    console.log(`Controls/` + index)
+    console.log(newPreset)
+    set(heightRef, newPreset).catch((error) => {
       console.error("Error updating height in Firebase", error);});
   };
   
@@ -928,10 +994,10 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
           </button>
         </div>
         <div className="controls" style={styles.buttonGroup}>
-          <button onClick={() => handleButtonClick('sitting')} style={getButtonStyleP(presets.sitting)}>1</button>
-          <button onClick={() => handleButtonClick('standing')} style={getButtonStyleP(presets.standing)}>2</button>
-          <button onClick={() => handleButtonClick('elevated1')} style={getButtonStyleP(presets.elevated1)}>3</button>
-          <button onClick={() => handleButtonClick('elevated2')} style={getButtonStyleP(presets.elevated2)}>4</button>
+          <button onClick={() => handleButtonClick(1)} style={getButtonStyleP(selectedUnit === 'IN' ?cmToINCH(presets[1]) : presets[1])}>1</button>
+          <button onClick={() => handleButtonClick(2)} style={getButtonStyleP(selectedUnit === 'IN' ?cmToINCH(presets[2]) : presets[2])}>2</button>
+          <button onClick={() => handleButtonClick(3)} style={getButtonStyleP(selectedUnit === 'IN' ?cmToINCH(presets[3]) : presets[3])}>3</button>
+          <button onClick={() => handleButtonClick(4)} style={getButtonStyleP(selectedUnit === 'IN' ?cmToINCH(presets[4]) : presets[4])}>4</button>
         </div>
       </div>
     );
@@ -942,14 +1008,14 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
       <div style={styles.buttonContainer}>
         <div style={{ marginBottom: '10px',backgroundColor: 'white',height: '220px',borderRadius: '10px' }}>
           <div style={{ position: 'relative',fontFamily: 'Open Sans, sans-serif',fontSize: '45px',fontWeight: 'bold',color: 'black',left: '15px',top: '15px'  }}>Fixed Height</div>
-          <div style={{ position: 'relative',fontFamily: 'Open Sans, sans-serif',fontSize: '45px',fontWeight: 'bold',color: 'black',left: '15px',top: '15px' }}>1</div>
-          <div style={{ position: 'relative',fontFamily: 'Open Sans, sans-serif',fontSize: '65px',fontWeight: 'bold',color: 'black',textAlign: 'right',right: '15px',top: '20px' }}>XXX.XX cm</div>
+          <div style={{ position: 'relative',fontFamily: 'Open Sans, sans-serif',fontSize: '45px',fontWeight: 'bold',color: 'black',left: '15px',top: '15px' }}>{currentValue}</div>
+          <div style={{ position: 'relative',fontFamily: 'Open Sans, sans-serif',fontSize: '65px',fontWeight: 'bold',color: 'black',textAlign: 'right',right: '15px',top: '20px' }}>{currentValueConfig} cm</div>
         </div>
         <div style={styles.buttonGroup}>
           <button onClick={() => handleButtonClick('increaseHeight')} style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '110px',height: '140px',fontFamily: 'Open Sans, sans-serif', fontSize: '50px', borderRadius: '25px',backgroundColor: '#9FDD94' }}>▲</button>
           <div>
             <button onClick={() => handleButtonClick('presetHeight')} style={{ backgroundColor: '#444444',height: '140px',width:'347.5px',borderRadius: '25px' }}>
-              <div style={{ position: 'relative',fontFamily: 'Open Sans, sans-serif',fontSize: '55px',fontWeight: 'bold',color: 'white' }}>Height 1</div>
+              <div style={{ position: 'relative',fontFamily: 'Open Sans, sans-serif',fontSize: '55px',fontWeight: 'bold',color: 'white' }}>Height {currentValue}</div>
             </button>
           </div>
           <button onClick={() => handleButtonClick('decreaseHeight')} style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '110px',height: '140px',fontFamily: 'Open Sans, sans-serif', fontSize: '50px', borderRadius: '25px',backgroundColor: '#9FDD94'}}>▼</button>
@@ -1151,7 +1217,7 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
           <div style={{ ...styles.buttonContainer, padding: '15px', marginTop: '0'  }}>
             <div style={styles.label}>Screen-Eye Distance</div>
             <div style={{ fontSize: '70px', color: '#FFFFFF', textAlign: 'right', paddingRight: '30px'}}> 
-              <span style={{color: '#9FDD94'}}>{averageDistance.toFixed(1)}</span>
+              <span style={{color: '#9FDD94'}}>{averageDistance.toFixed(0)}</span>
               <span style={{fontSize: '40px'}}>cm</span>
             </div>
             <div style={styles.progressBarS}>
