@@ -5,6 +5,8 @@ import { ref, set , query, limitToLast, onValue, startAt, endAt, orderByKey} fro
 import { IoIosBody } from "react-icons/io";
 import chargeGreen from '../imgs/charge_green.png';
 import camGreen from '../imgs/cam_green.png';
+import aiGreen from '../imgs/ai_green.png';
+import aiGreenOff from '../imgs/ai_white.png';
 import lockWhite from '../imgs/lock_white.png';
 import chargeGreenOff from '../imgs/charge_white.png';
 import camGreenOff from '../imgs/cam_white.png';
@@ -753,6 +755,13 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
               activeButtons['offCam']
               ? <img src={camGreenOff} alt="Cam Icon Off" style={{ width: '120px', height: '100px' }} />
               : <img src={camGreen} alt="Cam Icon" style={{ width: '120px', height: '100px' }} />
+            }
+          </button>
+          <button onClick={() => handleButtonClick('offAI')} style={getButtonStyleC('offAI')}>
+            {
+              activeButtons['offAI']
+              ? <img src={aiGreenOff} alt="AI Icon Off" style={{ width: '85px', height: '100px' }} />
+              : <img src={aiGreen} alt="AI Icon" style={{ width: '85px', height: '100px' }} />
             }
           </button>
         </div>
