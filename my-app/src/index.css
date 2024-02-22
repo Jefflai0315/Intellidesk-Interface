@@ -1708,6 +1708,7 @@ html, body, #root {
   height:  95%;
   width: 90%;
   margin:  0;
+  margin-bottom: 5px;
 }
 
 body {

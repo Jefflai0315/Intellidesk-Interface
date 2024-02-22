@@ -66,7 +66,7 @@ const Interface = () => {
       fontFamily: 'Open Sans, sans-serif',
       gap: '2%',
       width: '1260px', // Set the width of the container
-      height: '385px', // Set the height of the container
+      height: '390px', // Set the height of the container
       overflow: 'auto', // Optional: add scrolling to the container
       margin: '0 auto'
     },
