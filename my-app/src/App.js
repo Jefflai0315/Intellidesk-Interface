@@ -17,7 +17,7 @@ function App() {
       <>
           <Router>
               <Routes>
-                  <Route
+                  {/* <Route
                       exact
                       path="/Posture"
                       element={<Posture />}
@@ -25,21 +25,22 @@ function App() {
                   <Route
                       path="/"
                       element={<Home />}
-                  />
-                  <Route
+                  /> */}
+                  {/* <Route
                       path="/Component"
                       element={<YourReactComponent />}
-                  />
-                  <Route
+                  /> */}
+                  {/* <Route
                       path="/Interface"
                       element={<Interface />}
-                  />{/* If any route mismatches the upper 
+                  /> */}
+                  {/* If any route mismatches the upper 
         route endpoints then, redirect triggers 
         and redirects app to home component with to="/" */}
                   {/* <Redirect to="/" /> */}
                   <Route
-                      path="*"
-                      element={<Navigate to="/" />}
+                      path="/"
+                      element={<Interface />}
                   />
               </Routes>
           </Router>
