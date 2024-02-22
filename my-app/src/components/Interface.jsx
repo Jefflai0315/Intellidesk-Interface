@@ -220,18 +220,10 @@ const Interface = () => {
     setIsNotifying(true);
     setTimeout(() => {
       setIsNotifying(false);
-    }, 3000); // 3 seconds duration
+    }, 5000); // 5 seconds duration
   };
 
-  // Example button to trigger the notification ( MODIFY TO ACCEPT STATE FROM FIREBASE)
-  useEffect(() => {
-    // Automatically trigger notification for demonstration
-    triggerNotification();
-  }, []);
-
-  const handlePageSelect = (pageIndex) => {
-    setScreenIndex(pageIndex);
-  };
+  
 
   // Handler functions for swipe actions
   // const handleSwipedLeft = () => setScreenIndex((prev) => prev + 1);
@@ -253,7 +245,7 @@ const Interface = () => {
   // const [gradient, setGradient] = useState('');
 
   const [screenIndex, setScreenIndex] = useState(0);
-  const [height, setHeight] = useState('180.0');
+  const [height, setHeight] = useState('180');
   const [averageDistance, setAverageDistance] = useState(0);
   const [sitStandProgress, setSitStandProgress] = useState(100);
   const [isStanding, setIsStanding] = useState(true);
@@ -264,7 +256,43 @@ const Interface = () => {
   const [current_user, setCurrentUser] = useState('JARVIS');
   const [postureNudge,setPostureNudge] = useState(false);
   const [videoUrl, setVideoUrl] = useState('');
-  const [heightUnit, setHeightUnit] = useState('');
+  const [heightUnit, setHeightUnit] = useState('CM');
+  const [thickUnit, setThickUnit] = useState('CM')
+  const [currentValue, setCurrentValue] = useState(1)
+  const [currentValueConfig, setCurrentValueConfig] = useState(1)
+
+  // Example button to trigger the notification ( MODIFY TO ACCEPT STATE FROM FIREBASE)
+  useEffect(() => {
+    if (postureNudge) {
+      const intervalId = setInterval(() => {
+        // Toggle the notification state to create a blinking effect
+        triggerNotification();
+      }, 5000); // 5000 milliseconds = 5 seconds
+  
+      // Clean up interval on component unmount or if postureNudge becomes 0
+      // return () => clearInterval(intervalId);
+    }
+  }, [postureNudge]);
+
+  const handlePageSelect = (pageIndex) => {
+    setScreenIndex(pageIndex);
+  };
+
+  // const presets = {
+  //   sitting: 120.0,
+  //   standing: 150.0,
+  //   elevated1: 180.0,
+  //   elevated2: 200.0,
+  // };
+  const [presets, setPresets] = useState({
+    1: 120.0,
+    2: 150.0,
+    3: 180.0,
+    4: 200.0,
+  });
+
+  
+  
 
 
   // Retrieve nudging status
@@ -285,6 +313,7 @@ const Interface = () => {
             setVideoUrl("/assets/videos/eye_dist_crop.mp4");
             break
         }
+        triggerNotification();
       }
       else {
         setPostureNudge(false);
@@ -301,6 +330,62 @@ const Interface = () => {
     console.log(current_user);
   }, [screenIndex]);
 
+  // Retrieve the control states from DB
+  useEffect(() => {
+    const fetchData = async () => {
+      // Listen for changes in PostureCamera (offCam) state
+      const offCamRef = ref(database, 'Controls/PostureCamera');
+      onValue(offCamRef, (snapshot) => {
+        const offCamState = !!snapshot.val(); // Convert to boolean
+        setActiveButtons(prevState => ({ ...prevState, offCam: offCamState }));
+      });
+  
+      // Listen for changes in ChargingCamera (offCharge) state
+      const offChargeRef = ref(database, 'Controls/ChargingCamera');
+      onValue(offChargeRef, (snapshot) => {
+        const offChargeState = !!snapshot.val(); // Convert to boolean
+        setActiveButtons(prevState => ({ ...prevState, offCharge: offChargeState }));
+      });
+  
+      // Listen for changes in HeightValue
+      const heightValueRef = ref(database, 'Controls/HeightValue');
+      onValue(heightValueRef, (snapshot) => {
+        setHeight(snapshot.val());
+      });
+  
+      // Listen for changes in Sensitivity
+      const sensitivityRef = ref(database, 'Controls/Sensitivity');
+      onValue(sensitivityRef, (snapshot) => {
+        setSensitivity(snapshot.val());
+      });
+  
+      // Listen for changes in Thickness
+      const thicknessRef = ref(database, 'Controls/Thickness');
+      onValue(thicknessRef, (snapshot) => {
+        setThickness(snapshot.val());
+      });
+
+      // const presetsRef = ref(database, `${current_user}/Controls`);
+
+      // onValue(presetsRef, (snapshot) => {
+      //   const data = snapshot.val();
+      //   console.log(data)
+      //   if (data) {
+      //     const newPresets = {
+      //       sitting: data.preset1,
+      //       standing: data.preset2,
+      //       elevated1: data.preset3,
+      //       elevated2: data.preset4,
+      //     };
+      //     setPresets(newPresets);
+      //   }
+      // });
+
+    };
+  
+    fetchData();
+  }, [database]); // Make sure to include `database` or relevant dependencies here if they might change or are dynamically set.
+  
 
   useEffect(() => {
     const postureRef = query(ref(database, `Controls/PostureNudge`));
@@ -315,6 +400,33 @@ const Interface = () => {
       }
     });
   }, [screenIndex]);
+
+  useEffect(() => {
+  const presetRef = query(ref(database,'/Controls/'));
+  onValue(presetRef, (snapshot) => {
+    const data = snapshot.val();
+    const currValueConf = data[currentValue]
+    setCurrentValueConfig(currValueConf);
+    for (let i = 1; i < 5; i++) {
+      setPresets((prevPresets) => ({
+        ...prevPresets,
+        [i]: data[i],
+      }));
+    }
+  }
+  );
+    // const presetHeightRef = query(ref(database, `Controls/`+currentValue));
+    // onValue(presetHeightRef, (snapshot) => {
+    //   const data = snapshot.val();
+      
+    //   setCurrentValueConfig(data);
+    //   setPresets((prevPresets) => ({
+    //     ...prevPresets,
+    //     [currentValue]: data,
+    //   }));
+      
+    // });
+  }, [currentValue]);
 
   
   // Firebase data fetching and processing for posture
@@ -348,82 +460,214 @@ const Interface = () => {
   const [selectedUnit, setSelectedUnit] = useState('CM');
 
   const cmToINCH = (val) => {
-    return val * 0.393701; // Converts centimeters to inches
+    return Number((val * 0.393701).toFixed(0)); // Converts centimeters to inches and rounds to 1 decimal place
   };
   
   const inchToCM = (val) => {
-    return val * 2.54; // Converts inches to centimeters
+    return Number((val * 2.54).toFixed(0)); // Converts inches to centimeters and rounds to 1 decimal place
   };
 
-
-  // Function to handle button click
+  const updateButtonStateInFirebase = (buttonKey, state) => {
+    let path = "ChargingCamera";
+    if (buttonKey === "offCam") {
+      path = "PostureCamera";
+    }
+    const buttonRef = ref(database, `Controls/${path}`);
+    set(buttonRef, state).catch((error) => {
+      console.error(`Error updating ${buttonKey} in Firebase`, error);
+    });
+  };
   const handleButtonClick = (buttonKey) => {
     if (buttonKey === 'lockButton') {
-      setIsLocked(!isLocked); // Toggle the locked state
-      // Don't proceed further if it's the lock button
+      setIsLocked(!isLocked);
       return;
     }
-    if (isLocked) {
-      // If controls are locked, do not allow any other buttons to perform actions
-      return;
-    }
+  
+    if (isLocked) return;
+  
     if (buttonKey === 'changeCM') {
-      setSelectedUnit('CM'); // Set the unit to centimeters
-      
+      // Convert and set height and thickness if the current selected unit is 'IN'
+      if (selectedUnit === 'IN') {
+        setHeight(prevHeight => inchToCM(prevHeight));
+        setThickness(prevThick => inchToCM(prevThick));
+      }
+      setSelectedUnit('CM');
+      setHeightUnit('CM');
+      setThickUnit('CM');
     } else if (buttonKey === 'changeIN') {
-      setSelectedUnit('IN'); // Set the unit to inches
-
-    }
-    // Toggle the button's active state
-    setActiveButtons(prevState => ({
-        ...prevState,
-        [buttonKey]: !prevState[buttonKey]
-    }));
-    setActiveStates(prevActiveStates => ({
-      ...prevActiveStates,
-      [buttonKey]: !prevActiveStates[buttonKey]
-    }));
-    // Call handlePreset only for specific buttons and if they are being activated
-    if (buttonKey !== 'offCam' && buttonKey !== 'offCharge' && !activeButtons[buttonKey] && buttonKey !== 'lockButton' && buttonKey !== 'modeButton') {
-        handlePreset(presets[buttonKey]);
-    }
-    // Call handlePreset only for specific buttons and if they are being activated
-    if (buttonKey in presets) { // Check if buttonKey is a property in presets
-      const presetHeight = presets[buttonKey];
-      if (typeof presetHeight === 'number') { // Make sure it is a number
+      // Convert and set height and thickness if the current selected unit is 'CM'
+      if (selectedUnit === 'CM') {
+        setHeight(prevHeight => cmToINCH(prevHeight));
+        setThickness(prevThick => cmToINCH(prevThick));
+      }
+      setSelectedUnit('IN');
+      setHeightUnit('IN');
+      setThickUnit('IN');
+    } else if (buttonKey === 'offCam' || buttonKey === 'offCharge') {
+      setActiveButtons(curState => {
+        const newState = !curState[buttonKey];
+        updateButtonStateInFirebase(buttonKey, newState ? 1: 0);
+        return { ...curState, [buttonKey]: newState };
+      });
+    } else if (buttonKey in presets) {
+      let presetHeight = presets[buttonKey];
+      if (typeof presetHeight === 'number') {
+        if (selectedUnit === 'IN') {
+          presetHeight = cmToINCH(presetHeight);
+        }
         handlePreset(presetHeight);
       } else {
         console.error('Preset height is not a number:', presetHeight);
       }
+    } else if (buttonKey === 'presetHeight'){
+      const currentV = currentValue === 4 ? 1 : currentValue + 1;
+      setCurrentValue(currentV);
+
+    } else if (buttonKey === 'increaseHeight'){
+      setCurrentValueConfig(prevConfig => {
+        const newConfig = parseFloat((prevConfig + 1).toFixed(0));
+        updatePresetInFirebase(newConfig,currentValue);
+        return newConfig;
+      });
+    
+    } else if (buttonKey === 'decreaseHeight'){
+      setCurrentValueConfig(prevConfig => {
+        const newConfig = parseFloat((prevConfig - 1).toFixed(0));
+        updatePresetInFirebase(newConfig,currentValue);
+        return newConfig;
+      });
+    }else {
+      setActiveButtons(prevState => ({ ...prevState, [buttonKey]: !prevState[buttonKey] }));
+      setActiveStates(prevActiveStates => ({ ...prevActiveStates, [buttonKey]: !prevActiveStates[buttonKey] }));
     }
-};
+  };
+  
+  
+//   // Function to handle button click
+//   const handleButtonClick = (buttonKey) => {
+//     if (buttonKey === 'lockButton') {
+//       setIsLocked(!isLocked); // Toggle the locked state
+//       // Don't proceed further if it's the lock button
+//       return;
+//     }
+//     if (isLocked) {
+//       // If controls are locked, do not allow any other buttons to perform actions
+//       return;
+//     }
+//     if (buttonKey === 'changeCM') {
+//       setSelectedUnit('CM'); // Set the unit to centimeters
+//       setHeightUnit(prevUnit => {
+//         if (prevUnit === 'IN') {
+//           setHeight(
+//             prevHeight => {
+//               const new_height = inchToCM(prevHeight);
+//             return new_height;
+//           });
+//         }
+//         return "CM"; // Convert string back to float
+//       });
+
+//       setThickUnit(prevUnit => {
+//         if (prevUnit === 'IN') {
+//           setThickness(
+//             prevThick=> Number((prevThick * Math.sqrt(2.54)).toFixed(1)));
+//         }
+//         return "CM"; // Convert string back to float
+//       });
+
+
+      
+//     } else if (buttonKey === 'changeIN') {
+//       setSelectedUnit('IN'); // Set the unit to inches
+//       setHeightUnit(prevUnit => {
+//         if (prevUnit === 'CM') {
+//           setHeight(
+//             prevHeight => {
+//               const new_height = cmToINCH(prevHeight);
+//             return new_height;
+//           });
+//         }
+//         return "IN"; // Convert string back to float
+//       });
+//       setThickUnit(prevUnit => {
+//         if (prevUnit === 'CM') {
+//           setThickness(
+//             // Dont know why the func is called twice
+//             prevHeight => Number((prevHeight * Math.sqrt(0.393701)).toFixed(1)));
+//         }
+//         return "IN"; // Convert string back to float
+//       });
+//     }
+//     // Toggle the button's active state
+//     setActiveButtons(prevState => ({
+//         ...prevState,
+//         [buttonKey]: !prevState[buttonKey]
+//     }));
+//     setActiveStates(prevActiveStates => ({
+//       ...prevActiveStates,
+//       [buttonKey]: !prevActiveStates[buttonKey]
+//     }));
+
+//     if (buttonKey === 'offCam' || buttonKey === 'offCharge') {
+//       // Toggle the state based on its previous value
+//       setActiveButtons(curState => {
+
+//         // Update the new state in Firebase
+//         updateButtonStateInFirebase(buttonKey, curState[buttonKey] ? 0 : 1);
+        
+//       });
+//       return; // Exit the function after handling the toggle
+//     }
+//     // Call handlePreset only for specific buttons and if they are being activated
+//     if (buttonKey !== 'offCam' && buttonKey !== 'offCharge' && !activeButtons[buttonKey] && buttonKey !== 'lockButton' && buttonKey !== 'modeButton') {
+//         handlePreset(presets[buttonKey]);
+//     }
+//     // Call handlePreset only for specific buttons and if they are being activated
+//     if (buttonKey in presets) { // Check if buttonKey is a property in presets
+//       const presetHeight = presets[buttonKey];
+//       if (typeof presetHeight === 'number') { // Make sure it is a number
+//         handlePreset(presetHeight);
+//       } else {
+//         console.error('Preset height is not a number:', presetHeight);
+//       }
+//     }
+// };
 
   // State to keep track of thickness value
   const [thickness, setThickness] = useState(10);
 
-  const updateThicknessInFirebase = (newThick) => {
+  // Adjusted function to update thickness in Firebase with unit consideration
+  const updateThicknessInFirebase = (newThick, currentUnit) => {
+    let firebaseThickness = newThick;
+    // Convert to centimeters only if the current unit is inches and update is necessary
+    if (currentUnit === 'IN') {
+      firebaseThickness = inchToCM(newThick);
+    }
     const thickRef = ref(database, `Controls/Thickness`);
-    set(thickRef, newThick).catch((error) => {
-      console.error("Error updating thickness in Firebase", error);});
+    set(thickRef, firebaseThickness).catch((error) => {
+      console.error("Error updating thickness in Firebase", error);
+    });
   };
   // Function to handle increase thickness
   const handleIncreaseThickness = () => {
     setThickness(prevThickness => {
-      const newThickness = (prevThickness + 0.01).toFixed(2); // increment by 0.01 and fix to 2 decimal places
-      updateThicknessInFirebase(newThickness);
-      return parseFloat(newThickness); // Convert string back to float
+      const newThickness = parseFloat((prevThickness + 0.01).toFixed(2)); // Increment and fix to 2 decimal places
+      // Update Firebase with the correct unit
+      updateThicknessInFirebase(newThickness, thickUnit);
+      return newThickness; // Update state with new thickness
     });
   };
 
   // Function to handle decrease thickness
   const handleDecreaseThickness = () => {
     setThickness(prevThickness => {
-      if (prevThickness > 0.01) { // Check if greater than the minimum increment
-        const newThickness = (prevThickness - 0.01).toFixed(2); // decrement by 0.01 and fix to 2 decimal places
-        updateThicknessInFirebase(newThickness);
-        return parseFloat(newThickness); // Convert string back to float
+      if (prevThickness > 0.01) { // Ensure thickness doesn't go below minimum
+        const newThickness = parseFloat((prevThickness - 0.01).toFixed(2)); // Decrement and fix to 2 decimal places
+        // Update Firebase with the correct unit
+        updateThicknessInFirebase(newThickness, thickUnit);
+        return newThickness; // Update state with new thickness
       }
-      return prevThickness; // If already at minimum, return current thickness
+      return prevThickness; // Return current thickness if already at minimum
     });
   };
 
@@ -675,16 +919,11 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
     return `linear-gradient(to right, ${colorStops.join(', ')})`;
   };
   
-  const presets = {
-    sitting: 120.0,
-    standing: 150.0,
-    elevated1: 180.0,
-    elevated2: 200.0,
-  };
+  
 
   const applyPreset = (presetHeight) => {
     if (presetHeight !== undefined && !isNaN(presetHeight)) {
-      setHeight(presetHeight.toFixed(1));
+      setHeight(presetHeight.toFixed(0));
       updateHeightInFirebase(presetHeight);
     } else {
       console.error('Invalid preset height:', presetHeight);
@@ -696,6 +935,14 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
     set(heightRef, newHeight).catch((error) => {
       console.error("Error updating height in Firebase", error);});
   };
+
+  const updatePresetInFirebase = (newPreset, index) => {
+    const heightRef = ref(database, `Controls/` + index);
+    console.log(`Controls/` + index)
+    console.log(newPreset)
+    set(heightRef, newPreset).catch((error) => {
+      console.error("Error updating height in Firebase", error);});
+  };
   
   const handleIncrease = () => {
     if (isLocked) {
@@ -703,7 +950,7 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
       return;
     }
     setHeight(prevHeight => {
-      const newHeight = (parseFloat(prevHeight) + 0.1).toFixed(1);
+      const newHeight = (parseFloat(prevHeight) + 1).toFixed(0);
       updateHeightInFirebase(newHeight);
       return newHeight;
     });
@@ -715,7 +962,7 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
       return;
     }
     setHeight(prevHeight => {
-      const newHeight = (parseFloat(prevHeight) - 0.1).toFixed(1);
+      const newHeight = (parseFloat(prevHeight) - 1).toFixed(0);
       updateHeightInFirebase(newHeight);
       return newHeight;
     });
@@ -766,10 +1013,10 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
           </button>
         </div>
         <div className="controls" style={styles.buttonGroup}>
-          <button onClick={() => handleButtonClick('sitting')} style={getButtonStyleP(presets.sitting)}>1</button>
-          <button onClick={() => handleButtonClick('standing')} style={getButtonStyleP(presets.standing)}>2</button>
-          <button onClick={() => handleButtonClick('elevated1')} style={getButtonStyleP(presets.elevated1)}>3</button>
-          <button onClick={() => handleButtonClick('elevated2')} style={getButtonStyleP(presets.elevated2)}>4</button>
+          <button onClick={() => handleButtonClick(1)} style={getButtonStyleP(selectedUnit === 'IN' ?cmToINCH(presets[1]) : presets[1])}>1</button>
+          <button onClick={() => handleButtonClick(2)} style={getButtonStyleP(selectedUnit === 'IN' ?cmToINCH(presets[2]) : presets[2])}>2</button>
+          <button onClick={() => handleButtonClick(3)} style={getButtonStyleP(selectedUnit === 'IN' ?cmToINCH(presets[3]) : presets[3])}>3</button>
+          <button onClick={() => handleButtonClick(4)} style={getButtonStyleP(selectedUnit === 'IN' ?cmToINCH(presets[4]) : presets[4])}>4</button>
         </div>
       </div>
     );
@@ -780,14 +1027,14 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
       <div style={styles.buttonContainer}>
         <div style={{ marginBottom: '10px',backgroundColor: 'white',height: '220px',borderRadius: '10px' }}>
           <div style={{ position: 'relative',fontFamily: 'Open Sans, sans-serif',fontSize: '45px',fontWeight: 'bold',color: 'black',left: '15px',top: '15px'  }}>Fixed Height</div>
-          <div style={{ position: 'relative',fontFamily: 'Open Sans, sans-serif',fontSize: '45px',fontWeight: 'bold',color: 'black',left: '15px',top: '15px' }}>1</div>
-          <div style={{ position: 'relative',fontFamily: 'Open Sans, sans-serif',fontSize: '65px',fontWeight: 'bold',color: 'black',textAlign: 'right',right: '15px',top: '20px' }}>XXX.XX cm</div>
+          <div style={{ position: 'relative',fontFamily: 'Open Sans, sans-serif',fontSize: '45px',fontWeight: 'bold',color: 'black',left: '15px',top: '15px' }}>{currentValue}</div>
+          <div style={{ position: 'relative',fontFamily: 'Open Sans, sans-serif',fontSize: '65px',fontWeight: 'bold',color: 'black',textAlign: 'right',right: '15px',top: '20px' }}>{currentValueConfig} cm</div>
         </div>
         <div style={styles.buttonGroup}>
           <button onClick={() => handleButtonClick('increaseHeight')} style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '110px',height: '140px',fontFamily: 'Open Sans, sans-serif', fontSize: '50px', borderRadius: '25px',backgroundColor: '#9FDD94' }}>▲</button>
           <div>
             <button onClick={() => handleButtonClick('presetHeight')} style={{ backgroundColor: '#444444',height: '140px',width:'347.5px',borderRadius: '25px' }}>
-              <div style={{ position: 'relative',fontFamily: 'Open Sans, sans-serif',fontSize: '55px',fontWeight: 'bold',color: 'white' }}>Height 1</div>
+              <div style={{ position: 'relative',fontFamily: 'Open Sans, sans-serif',fontSize: '55px',fontWeight: 'bold',color: 'white' }}>Height {currentValue}</div>
             </button>
           </div>
           <button onClick={() => handleButtonClick('decreaseHeight')} style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '110px',height: '140px',fontFamily: 'Open Sans, sans-serif', fontSize: '50px', borderRadius: '25px',backgroundColor: '#9FDD94'}}>▼</button>
@@ -800,7 +1047,7 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
       <div style={styles.buttonContainer}>
         <div style={{ marginBottom: '10px',backgroundColor: 'white',height: '220px',borderRadius: '10px' }}>
           <div style={{ position: 'relative',fontFamily: 'Open Sans, sans-serif',fontSize: '45px',fontWeight: 'bold',color: 'black',left: '15px',top: '15px'  }}>Table Thickness</div>
-          <div style={{ position: 'relative',fontFamily: 'Open Sans, sans-serif',fontSize: '65px',fontWeight: 'bold',color: 'black',textAlign: 'right',right: '15px',top: '70px' }}>{thickness} cm</div>
+          <div style={{ position: 'relative',fontFamily: 'Open Sans, sans-serif',fontSize: '65px',fontWeight: 'bold',color: 'black',textAlign: 'right',right: '15px',top: '70px' }}>{thickness} {thickUnit}</div>
         </div>
         <div style={styles.buttonGroup}>
           <button onClick={handleIncreaseThickness} style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '288px',height: '140px',fontFamily: 'Open Sans, sans-serif', fontSize: '50px', borderRadius: '25px',backgroundColor: '#9FDD94' }}>▲</button>
@@ -890,7 +1137,7 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
             <div style={{ fontSize: '40px', color: '#FFFFFF', paddingTop: '15px'}}>Table Height:</div>
             <div style={{ textAlign: 'right', position: 'relative', left: '-10px' }}>
               <div style={{ color: '#9FDD94', fontSize: '110px' }}>{height}</div>
-              <div style={{ fontSize: '45px' }}>CM</div>
+              <div style={{ fontSize: '45px' }}>{heightUnit}</div>
             </div>
             <button onClick={triggerNotification}></button>
           </div>
@@ -989,7 +1236,7 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
           <div style={{ ...styles.buttonContainer, padding: '15px', marginTop: '0'  }}>
             <div style={styles.label}>Screen-Eye Distance</div>
             <div style={{ fontSize: '70px', color: '#FFFFFF', textAlign: 'right', paddingRight: '30px'}}> 
-              <span style={{color: '#9FDD94'}}>{averageDistance.toFixed(1)}</span>
+              <span style={{color: '#9FDD94'}}>{averageDistance.toFixed(0)}</span>
               <span style={{fontSize: '40px'}}>cm</span>
             </div>
             <div style={styles.progressBarS}>
