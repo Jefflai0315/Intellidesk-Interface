@@ -5,6 +5,8 @@ import { ref, set , query, limitToLast, onValue, startAt, endAt, orderByKey} fro
 import { IoIosBody } from "react-icons/io";
 import chargeGreen from '../imgs/charge_green.png';
 import camGreen from '../imgs/cam_green.png';
+import aiGreen from '../imgs/ai_green.png';
+import aiGreenOff from '../imgs/ai_white.png';
 import lockWhite from '../imgs/lock_white.png';
 import chargeGreenOff from '../imgs/charge_white.png';
 import camGreenOff from '../imgs/cam_white.png';
@@ -302,20 +304,20 @@ const Interface = () => {
         setPostureNudge(true);
         switch (data) {
           case "1":
-            setVideoUrl("/assets/videos/back_pain_va.mp4");
+            setVideoUrl("/assets/videos/stand_crop.mp4");
             break
           case "2":
-            setVideoUrl("/assets/videos/eye_dist_va.mp4");
+            setVideoUrl("/assets/videos/back_pain_crop.mp4");
             break
           case "3":
-            setVideoUrl("/assets/videos/stand_va.mp4");
+            setVideoUrl("/assets/videos/eye_dist_crop.mp4");
             break
         }
         triggerNotification();
       }
       else {
         setPostureNudge(false);
-        setVideoUrl("/assets/videos/idle_va.mp4");
+        setVideoUrl("/assets/videos/idle_crop.mp4");
       }
     });
   }, [screenIndex]);
@@ -717,7 +719,7 @@ const Interface = () => {
     fontWeight: 'bold',
     justifyContent: 'center',
     alignItems: 'center',
-    width: '23%',
+    width: '23.5%',
     height: '180px',
     borderRadius: '25px'
   };
@@ -966,6 +968,16 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
     });
   };
 
+  const idlePgContainerStyle = {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: '100%', // This should be the height of the parent container
+    backgroundColor: 'transparent',
+    border: 'none',
+    position: 'relative',
+  };
+
   // Settings page togggles
   const handleSettingsToggle = () => {
     setCurrentSettingsPg(prevPg => {
@@ -990,6 +1002,13 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
               activeButtons['offCam']
               ? <img src={camGreenOff} alt="Cam Icon Off" style={{ width: '120px', height: '100px' }} />
               : <img src={camGreen} alt="Cam Icon" style={{ width: '120px', height: '100px' }} />
+            }
+          </button>
+          <button onClick={() => handleButtonClick('offAI')} style={getButtonStyleC('offAI')}>
+            {
+              activeButtons['offAI']
+              ? <img src={aiGreenOff} alt="AI Icon Off" style={{ width: '85px', height: '100px' }} />
+              : <img src={aiGreen} alt="AI Icon" style={{ width: '85px', height: '100px' }} />
             }
           </button>
         </div>
@@ -1180,7 +1199,7 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
           loop
           style={{
             width: '100%',
-            height: 'auto', 
+            height: '250px', 
             backgroundColor: 'transparent', 
             border: 'none', 
           }}
@@ -1232,30 +1251,32 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
       )}
       {screenIndex === 2 && (
         // Your second screen JSX
-        <div style={containerStyleWithGlow}>
+        <div style={{...containerStyleWithGlow, gap: '0%'}}>
         <div style={{ position: 'relative', height: '100%', width: '54.5%', top: '10px', left: '10px' }}>
           <img src={logoImg} alt="Intellidesk Logo" style={{ width: '286px', height: 'auto' }} />
           <div >{postureNudge && <IoIosBody style={{ color: '#EE5757', top: '10px', left: '10px' }}/>}</div>
           <div style={styles.horizontalLine}></div>
           <div style={{ fontSize: '50px', color: '#9FDD94'}}> {current_user} </div>
           <Clock style={{ position: 'absolute', top: '150px', left: '40px', fontSize: '130px', fontFamily: 'Open Sans, sans-serif' }}/>
+          <button onClick={triggerNotification}></button>
         </div>
         <div style={styles.verticalLine}></div>
-        <button onClick={triggerNotification}></button>
         <div style={{ position: 'relative', height: '100%', width: '55%', top: '10px', left: '10px' }}>
-
-        {videoUrl && <video 
-          src={videoUrl} 
-          autoPlay 
-          loop
-          style={{
-            width: '100%',
-            height: 'auto', 
-            backgroundColor: 'transparent', 
-            border: 'none', 
-          }}
-          />
+        <div style={idlePgContainerStyle}>
+          {videoUrl && <video 
+            src={videoUrl} 
+            autoPlay 
+            loop
+            style={{
+              width: '50%',
+              height: 'auto', 
+              backgroundColor: 'transparent', 
+              border: 'none', 
+              position: 'relative',
+            }}
+            />
           }
+        </div>
           {/* <Clock style={{ position: 'absolute', top: '0', left: '0' }}/> */}
         </div>
       </div>
