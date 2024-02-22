@@ -346,6 +346,13 @@ const Interface = () => {
         const offChargeState = !!snapshot.val(); // Convert to boolean
         setActiveButtons(prevState => ({ ...prevState, offCharge: offChargeState }));
       });
+
+      // Listen for changes in AI (offAI) state
+      const offAIRef = ref(database, 'Controls/AI');
+      onValue(offAIRef, (snapshot) => {
+        const offAIState = !!snapshot.val(); // Convert to boolean
+        setActiveButtons(prevState => ({ ...prevState, offAI: offAIState }));
+      });
   
       // Listen for changes in HeightValue
       const heightValueRef = ref(database, 'Controls/HeightValue');
@@ -471,12 +478,20 @@ const Interface = () => {
     let path = "ChargingCamera";
     if (buttonKey === "offCam") {
       path = "PostureCamera";
+      console.log(path);
     }
+    console.log(buttonKey);
+    if (buttonKey === "offAI") {
+      path = "AI";
+      console.log(path);
+    }
+    console.log(buttonKey);
     const buttonRef = ref(database, `Controls/${path}`);
     set(buttonRef, state).catch((error) => {
       console.error(`Error updating ${buttonKey} in Firebase`, error);
     });
   };
+
   const handleButtonClick = (buttonKey) => {
     if (buttonKey === 'lockButton') {
       setIsLocked(!isLocked);
@@ -503,7 +518,7 @@ const Interface = () => {
       setSelectedUnit('IN');
       setHeightUnit('IN');
       setThickUnit('IN');
-    } else if (buttonKey === 'offCam' || buttonKey === 'offCharge') {
+    } else if (buttonKey === 'offCam' || buttonKey === 'offCharge' || buttonKey === 'offAI') {
       setActiveButtons(curState => {
         const newState = !curState[buttonKey];
         updateButtonStateInFirebase(buttonKey, newState ? 1: 0);
