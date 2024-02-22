@@ -185,7 +185,7 @@ const Interface = () => {
       borderRadius: '25px',
       backgroundColor: '#555', // Make sure this is visible against the container background
       margin: '10px 0',
-      width: '845px', // Set the width of the progress bar container to full width
+      width: '830px', // Set the width of the progress bar container to full width
       overflow: 'hidden', // Ensures the inner progress doesn't overflow
     },
     progress: {
@@ -1201,7 +1201,7 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
       )}
       {screenIndex === 1 && (
         // Your second screen JSX
-      <div style={containerStyleWithGlow}>
+      <div style={{...containerStyleWithGlow, gap: '1%'}}>
         <div style={{ position: 'relative', height: '100%', width: '24%', top: '10px', left: '10px' }}>
           <img src={logoImg} alt="Intellidesk Logo" style={{ width: '286px', height: 'auto' }} />
           <div >{postureNudge && <IoIosBody style={{ color: '#EE5757', top: '10px', left: '10px' }}/>}</div>
@@ -1236,7 +1236,7 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
               </div>
               <div style={styles.slider}> {/* Replace with actual slider component */}</div>
             </div>        
-        <div style={{...styles.stackContainer, marginTop: '15px'}}>
+        <div style={{...styles.stackContainer, marginTop: '15px', width: '95%'}}>
           <div style={{ ...styles.buttonContainer, padding: '20px', marginTop: '0', paddingBottom: '20px' }}>
           <div style={styles.label}>Posture</div>
           <div style={{fontSize: '70px', textAlign: 'right', paddingRight: '40px'}}>
