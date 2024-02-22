@@ -326,8 +326,11 @@ const Interface = () => {
 
   // TODO: Retrieve active user from DB
   useEffect(() => {
-    setCurrentUser("Jeff");
-    console.log(current_user);
+    const userRef = ref(database, 'Controls/User');
+      onValue(userRef, (snapshot) => {
+        const user = snapshot.val(); // Convert to boolean
+        setCurrentUser(user);
+      });
   }, [screenIndex]);
 
   // Retrieve the control states from DB
@@ -1040,15 +1043,15 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
   const SettingsPg2 = () => {
     return (
       <div style={styles.buttonContainer}>
-        <div style={{ marginBottom: '10px',backgroundColor: 'white',height: '220px',borderRadius: '10px' }}>
+        <div style={{ marginBottom: '10px',backgroundColor: 'white',height: '174px',width:'550px',borderRadius: '10px' }}>
           <div style={{ position: 'relative',fontFamily: 'Open Sans, sans-serif',fontSize: '45px',fontWeight: 'bold',color: 'black',left: '15px',top: '15px'  }}>Fixed Height</div>
           <div style={{ position: 'relative',fontFamily: 'Open Sans, sans-serif',fontSize: '45px',fontWeight: 'bold',color: 'black',left: '15px',top: '15px' }}>{currentValue}</div>
-          <div style={{ position: 'relative',fontFamily: 'Open Sans, sans-serif',fontSize: '65px',fontWeight: 'bold',color: 'black',textAlign: 'right',right: '15px',top: '20px' }}>{currentValueConfig} cm</div>
+          <div style={{ position: 'relative',fontFamily: 'Open Sans, sans-serif',fontSize: '65px',fontWeight: 'bold',color: 'black',textAlign: 'right',right: '15px',top: '5px' }}>{currentValueConfig} cm</div>
         </div>
         <div style={styles.buttonGroup}>
           <button onClick={() => handleButtonClick('increaseHeight')} style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '110px',height: '140px',fontFamily: 'Open Sans, sans-serif', fontSize: '50px', borderRadius: '25px',backgroundColor: '#9FDD94' }}>▲</button>
           <div>
-            <button onClick={() => handleButtonClick('presetHeight')} style={{ backgroundColor: '#444444',height: '140px',width:'347.5px',borderRadius: '25px' }}>
+            <button onClick={() => handleButtonClick('presetHeight')} style={{ backgroundColor: '#444444',height: '140px',width:'306px',borderRadius: '25px' }}>
               <div style={{ position: 'relative',fontFamily: 'Open Sans, sans-serif',fontSize: '55px',fontWeight: 'bold',color: 'white' }}>Height {currentValue}</div>
             </button>
           </div>
@@ -1060,13 +1063,13 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
   const SettingsPg3 = () => {
     return (
       <div style={styles.buttonContainer}>
-        <div style={{ marginBottom: '10px',backgroundColor: 'white',height: '220px',borderRadius: '10px' }}>
+        <div style={{ marginBottom: '10px',backgroundColor: 'white',height: '174px',width:'550px',borderRadius: '10px' }}>
           <div style={{ position: 'relative',fontFamily: 'Open Sans, sans-serif',fontSize: '45px',fontWeight: 'bold',color: 'black',left: '15px',top: '15px'  }}>Table Thickness</div>
-          <div style={{ position: 'relative',fontFamily: 'Open Sans, sans-serif',fontSize: '65px',fontWeight: 'bold',color: 'black',textAlign: 'right',right: '15px',top: '70px' }}>{thickness} {thickUnit}</div>
+          <div style={{ position: 'relative',fontFamily: 'Open Sans, sans-serif',fontSize: '65px',fontWeight: 'bold',color: 'black',textAlign: 'right',right: '15px',top: '50px' }}>{thickness} {thickUnit}</div>
         </div>
         <div style={styles.buttonGroup}>
-          <button onClick={handleIncreaseThickness} style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '288px',height: '140px',fontFamily: 'Open Sans, sans-serif', fontSize: '50px', borderRadius: '25px',backgroundColor: '#9FDD94' }}>▲</button>
-          <button onClick={handleDecreaseThickness} style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '288px',height: '140px',fontFamily: 'Open Sans, sans-serif', fontSize: '50px', borderRadius: '25px',backgroundColor: '#9FDD94'}}>▼</button>
+          <button onClick={handleIncreaseThickness} style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '268px',height: '140px',fontFamily: 'Open Sans, sans-serif', fontSize: '50px', borderRadius: '25px',backgroundColor: '#9FDD94' }}>▲</button>
+          <button onClick={handleDecreaseThickness} style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '268px',height: '140px',fontFamily: 'Open Sans, sans-serif', fontSize: '50px', borderRadius: '25px',backgroundColor: '#9FDD94'}}>▼</button>
         </div>
       </div>
     );
@@ -1075,13 +1078,13 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
   const SettingsPg4 = () => {
     return (
       <div style={styles.buttonContainer}>
-        <div style={{ marginBottom: '10px',backgroundColor: 'white',height: '220px',borderRadius: '10px' }}>
+        <div style={{ marginBottom: '10px',backgroundColor: 'white',height: '174px',width:'550px',borderRadius: '10px' }}>
           <div style={{ position: 'relative',fontFamily: 'Open Sans, sans-serif',fontSize: '45px',fontWeight: 'bold',color: 'black',left: '15px',top: '15px'  }}>Sensitivity</div>
-          <div style={{ position: 'relative',fontFamily: 'Open Sans, sans-serif',fontSize: '75px',fontWeight: 'bold',color: 'black',textAlign: 'right',right: '15px',top: '60px' }}>{sensitivity}</div>
+          <div style={{ position: 'relative',fontFamily: 'Open Sans, sans-serif',fontSize: '75px',fontWeight: 'bold',color: 'black',textAlign: 'right',right: '15px',top: '40px' }}>{sensitivity}</div>
         </div>
         <div style={styles.buttonGroup}>
-          <button onClick={handleIncreaseSensitivity} style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '288px',height: '140px',fontFamily: 'Open Sans, sans-serif', fontSize: '50px', borderRadius: '25px',backgroundColor: '#9FDD94' }}>▲</button>
-          <button onClick={handleDecreaseSensitivity} style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '288px',height: '140px',fontFamily: 'Open Sans, sans-serif', fontSize: '50px', borderRadius: '25px',backgroundColor: '#9FDD94'}}>▼</button>
+          <button onClick={handleIncreaseSensitivity} style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '268px',height: '140px',fontFamily: 'Open Sans, sans-serif', fontSize: '50px', borderRadius: '25px',backgroundColor: '#9FDD94' }}>▲</button>
+          <button onClick={handleDecreaseSensitivity} style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '268px',height: '140px',fontFamily: 'Open Sans, sans-serif', fontSize: '50px', borderRadius: '25px',backgroundColor: '#9FDD94'}}>▼</button>
         </div>
       </div>
     );
@@ -1090,9 +1093,9 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
   const SettingsPg5 = () => {
     return (
       <div style={styles.buttonContainer}>
-        <div style={{ marginBottom: '10px',backgroundColor: 'white',height: '220px',borderRadius: '10px' }}>
+        <div style={{ marginBottom: '10px',backgroundColor: 'white',height: '174px',width:'550px',borderRadius: '10px' }}>
           <div style={{ position: 'relative',fontFamily: 'Open Sans, sans-serif',fontSize: '45px',fontWeight: 'bold',color: 'black',left: '15px',top: '15px'  }}>Units</div>
-          <div style={{ position: 'relative',fontFamily: 'Open Sans, sans-serif',fontSize: '75px',fontWeight: 'bold',color: 'black',textAlign: 'right',right: '15px',top: '60px' }}>{selectedUnit}</div>
+          <div style={{ position: 'relative',fontFamily: 'Open Sans, sans-serif',fontSize: '75px',fontWeight: 'bold',color: 'black',textAlign: 'right',right: '15px',top: '40px' }}>{selectedUnit}</div>
         </div>
         <div style={styles.buttonGroup}>
           <button
@@ -1103,7 +1106,7 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
-              width: '288px',
+              width: '268px',
               height: '140px', 
               fontSize: '60px', 
               fontWeight: 'bold', 
@@ -1121,7 +1124,7 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
-              width: '288px',
+              width: '268px',
               height: '140px', 
               fontSize: '60px', 
               fontWeight: 'bold', 
