@@ -807,12 +807,12 @@ const Interface = () => {
   const pageIndicatorContainerStyle = {
     position: 'absolute', // Position it relative to the Interface component
     // Place it at the bottom with a margin of 10px
-    top: '430px',
-    left: '50%', // Center align the container
+    top: '420px',
+    left: '45%', // Center align the container
     transform: 'translateX(-50%)', // This ensures it's centered regardless of the width
     display: 'flex',
     justifyContent: 'center',
-    width: '100%', // Take the full width to center the content properly
+    width: '90%', // Take the full width to center the content properly
   };
 
   // Function to process data and generate gradient
