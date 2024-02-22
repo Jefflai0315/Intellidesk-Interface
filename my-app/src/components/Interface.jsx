@@ -1144,7 +1144,7 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
       </div>
       {screenIndex === 0 && (
         <div style={containerStyleWithGlow}>
-          <div style={{ position: 'relative', height: '100%', width: '30%', top: '10px', left: '10px' }}>
+          <div style={{ position: 'relative', height: '100%', width: '30%', top: '15px', left: '10px' }}>
             <img src={logoImg} alt="Intellidesk Logo" style={{ width: '286px', height: 'auto' }} />
             <div >{postureNudge && <IoIosBody style={{ color: '#EE5757', top: '10px', left: '10px' }}/>}</div>
             <div style={styles.horizontalLine}></div>
@@ -1202,7 +1202,7 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
       {screenIndex === 1 && (
         // Your second screen JSX
       <div style={{...containerStyleWithGlow, gap: '1%'}}>
-        <div style={{ position: 'relative', height: '100%', width: '24%', top: '10px', left: '10px' }}>
+        <div style={{ position: 'relative', height: '100%', width: '24%', top: '15px', left: '10px' }}>
           <img src={logoImg} alt="Intellidesk Logo" style={{ width: '286px', height: 'auto' }} />
           <div >{postureNudge && <IoIosBody style={{ color: '#EE5757', top: '10px', left: '10px' }}/>}</div>
           <div style={styles.horizontalLine}></div>
@@ -1229,7 +1229,7 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
         </div> */}
         <div style={styles.verticalLine}></div>
         <div style={styles.groupContainer}>
-          <div style={{ ...styles.buttonContainerPg2, padding: '15px', marginBottom: '0' }}>
+          <div style={{ ...styles.buttonContainerPg2, padding: '10px', marginBottom: '0' }}>
               <div style={styles.label}>Sit/Stand</div>
               <div style={styles.progressBarL}>
                 <div style={{ ...styles.progress, width: '100%', background: SitStandGradient }}></div>
@@ -1267,7 +1267,7 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
       {screenIndex === 2 && (
         // Your second screen JSX
         <div style={{...containerStyleWithGlow, gap: '0%'}}>
-        <div style={{ position: 'relative', height: '100%', width: '54.5%', top: '10px', left: '10px' }}>
+        <div style={{ position: 'relative', height: '100%', width: '54.5%', top: '15px', left: '10px' }}>
           <img src={logoImg} alt="Intellidesk Logo" style={{ width: '286px', height: 'auto' }} />
           <div >{postureNudge && <IoIosBody style={{ color: '#EE5757', top: '10px', left: '10px' }}/>}</div>
           <div style={styles.horizontalLine}></div>
