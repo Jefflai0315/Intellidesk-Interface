@@ -1703,3 +1703,15 @@
   top: 18px;
   width: 106px;
 }
+
+html, body, #root {
+  height:  100%;
+  margin:  0;
+}
+
+body {
+  overflow: hidden;
+}
+
+
+
