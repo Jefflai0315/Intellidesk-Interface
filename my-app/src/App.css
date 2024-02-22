@@ -57,7 +57,9 @@ button:active {
 html, body, #root {
   height:  95%;
   width: 90%;
-  margin:  0;
+  margin: 0;
+  margin-right:  20px;
+  margin-bottom: 10px;
 }
 
 body {
