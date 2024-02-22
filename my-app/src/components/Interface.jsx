@@ -91,7 +91,7 @@ const Interface = () => {
     },
     boldButton: {
       width: '130px', // Adjusted size to match image
-      height: '180px',
+      height: '170px',
       fontSize: '50px', // Larger font size if necessary
       backgroundColor: '#9FDD94', // Match the dark theme in the image
       color: '#fff',
@@ -735,7 +735,7 @@ const Interface = () => {
     justifyContent: 'center',
     alignItems: 'center',
     width: '23.5%',
-    height: '180px',
+    height: '170px',
     borderRadius: '25px'
   };
 
@@ -745,7 +745,7 @@ const Interface = () => {
     justifyContent: 'center',
     alignItems: 'center',
     width: '75%',
-    height: '180px', 
+    height: '170px', 
     borderRadius: '25px'
   };
 
@@ -769,7 +769,7 @@ const Interface = () => {
       justifyContent: 'center',
       alignItems: 'center',
       width: '130px',
-      height: '180px',
+      height: '170px',
       fontSize: '50px',
       borderRadius: '25px',
       // Ensure you return other necessary styles for the button
@@ -1158,8 +1158,8 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
           </div>
           <div style={{...styles.buttonGroup, width: '40%', margin: 0}}>
             <div style={{...styles.buttonContainer, width: 'fit-content'}}>
-              <button onClick={handleIncrease} style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '110px',height: '180px', fontSize: '50px', borderRadius: '25px'}}>▲</button>
-              <button onClick={handleDecrease} style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '110px',height: '180px', fontSize: '50px', borderRadius: '25px'}}>▼</button>
+              <button onClick={handleIncrease} style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '110px',height: '170px', fontSize: '50px', borderRadius: '25px'}}>▲</button>
+              <button onClick={handleDecrease} style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '110px',height: '170px', fontSize: '50px', borderRadius: '25px'}}>▼</button>
             </div>
             <div style={styles.verticalLine}></div>
             <div style={{...styles.buttonContainer, width: 'fit-content'}}>
@@ -1176,7 +1176,7 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
                   justifyContent: 'center',
                   alignItems: 'center',
                   width: '130px',
-                  height: '180px',
+                  height: '170px',
                   fontSize: '50px',
                   borderRadius: '25px',
                   backgroundColor: isLocked ? '#9FDD94' : '#444444', // Change to your default color
