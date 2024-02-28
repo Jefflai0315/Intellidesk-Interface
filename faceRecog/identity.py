@@ -75,7 +75,7 @@ class FaceRecognition:
             identity = 'Unknown'
             for name, known_embedding in self.known_embeddings.items():
                 similarity = self.cosine_similarity(embedding, known_embedding) 
-                print('similarity: ',similarity)
+                print(f'similarity with {name} from User database: ',similarity)
 
                 if similarity > max_similarity:
                     max_similarity = similarity
@@ -87,16 +87,16 @@ class FaceRecognition:
             cv2.rectangle(img, (bbox[0], bbox[1]), (bbox[2], bbox[3]), (0, 255, 0), 2)
             cv2.putText(img, identity, (bbox[0], bbox[1] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 255, 0), 2)
 
-        return img
+        return img, identity
 
 if __name__ == "__main__":
     img_dir = "Intellidesk"
-    img_path = '/Users/jefflai/intellidesk-screen/test.jpg'
-    # img_path = '/Users/jefflai/intellidesk-screen/XiongWei_10.jpg'
+    # img_path = '/Users/jefflai/intellidesk-screen/test.jpg'
+    img_path = '/Users/jefflai/intellidesk-screen/XiongWei_10.jpg'
     firebase_refs = initialize_firebase()
     face_recognition = FaceRecognition(img_dir,similarity_threshold = 0.65, firebase_refs= firebase_refs)
     # face_recognition.add_face_embeddings('/Users/jefflai/intellidesk-screen/faceRecog/Intellidesk/XiongWei', 'XiongWei')
-    result_img = face_recognition.identify_persons(img_path)
+    result_img, identity = face_recognition.identify_persons(img_path)
 
     cv2.imwrite("./output.jpg", result_img)  # Save the image
     
