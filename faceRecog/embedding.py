@@ -58,7 +58,8 @@ def cosine_similarity(embedding1, embedding2):
     return np.dot(embedding1, embedding2) / (norm(embedding1) * norm(embedding2))
 
 # Target img
-img_path = 'Intellidesk/Jeff/Jeff_1.jpg'
+# img_path = 'Intellidesk/Matthew/Matthew_2.jpg'
+img_path = '/Users/jefflai/intellidesk-screen/Matthew_4.jpg'
 img = cv2.imread(img_path)
 
 # Detect faces and extract features in your image
