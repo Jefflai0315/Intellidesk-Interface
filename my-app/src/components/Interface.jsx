@@ -208,11 +208,10 @@ const Interface = () => {
   const glowStyle = {
     boxShadow: isNotifying ? 'inset 0 0 45px 20px rgba(145, 232, 130)' : 'none',
     transition: 'box-shadow 0.5s ease-in-out',
-    // Add other styles as necessary
   };
   const containerStyleWithGlow = {
-    ...styles.container,
     ...glowStyle,
+    ...styles.container,
   };
 
   // Trigger the notification effect
@@ -290,10 +289,6 @@ const Interface = () => {
     3: 180.0,
     4: 200.0,
   });
-
-  
-  
-
 
   // Retrieve nudging status
   useEffect(() => {
@@ -1151,13 +1146,36 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
             <img src={logoImg} alt="Intellidesk Logo" style={{ width: '286px', height: 'auto' }} />
             <div >{postureNudge && <IoIosBody style={{ color: '#EE5757', top: '10px', left: '10px' }}/>}</div>
             <div style={styles.horizontalLine}></div>
-            <div style={{ fontSize: '50px', color: '#9FDD94'}}> {current_user} </div>
-            <div style={{ fontSize: '40px', color: '#FFFFFF', paddingTop: '15px'}}>Table Height:</div>
+            <div style={{ fontSize: '50px', color: '#9FDD94' }}>
+              {/* {current_user} <span style={{ fontSize: '30px', top: '-5px', position: 'relative' }}>◀</span> */}
+            </div>
+            {/* <div style={{ fontSize: '16px', color: '#9FDD94', marginBottom: '10px' }}>Select User:</div> */}
+            <select
+              onChange={(e) => setCurrentUser(e.target.value)}
+              value={current_user}
+              style={{
+                fontSize: '50px',
+                color: '#9FDD94',
+                backgroundColor: 'transparent', 
+                borderColor: 'transparent',
+                borderRadius: '5px',
+                padding: '5px 10px',
+                cursor: 'pointer',
+                position: 'relative',
+                left: '-15px',
+              }}
+            >
+              {/* might need to modify this area to read alist of users and render them in the UI */}
+              <option value="User1">User 1</option> 
+              <option value="User2">User 2</option>
+              <option value="User3">User 3</option>
+            </select>
+            <div style={{ fontSize: '40px', color: '#FFFFFF', paddingTop: '10px'}}>Table Height:</div>
             <div style={{ textAlign: 'right', position: 'relative', left: '-10px' }}>
               <div style={{ color: '#9FDD94', fontSize: '110px' }}>{height}</div>
-              <div style={{ fontSize: '45px' }}>{heightUnit}</div>
+              <div style={{ fontSize: '45px', bottom: '15px', position: 'relative' }}>{heightUnit}</div>
             </div>
-            <button onClick={triggerNotification}></button>
+            <button onClick={triggerNotification} style={{...styles.button, position: 'absolute', height: '20px', width: '20px', bottom: '5px' }}></button>
           </div>
           <div style={{...styles.buttonGroup, width: '40%', margin: 0}}>
             <div style={{...styles.buttonContainer, width: 'fit-content'}}>
@@ -1209,8 +1227,32 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
           <img src={logoImg} alt="Intellidesk Logo" style={{ width: '286px', height: 'auto' }} />
           <div >{postureNudge && <IoIosBody style={{ color: '#EE5757', top: '10px', left: '10px' }}/>}</div>
           <div style={styles.horizontalLine}></div>
-          <div style={{ fontSize: '50px', color: '#9FDD94'}}> {current_user} </div>
-          <button onClick={triggerNotification}></button>
+          {/* <div style={{ fontSize: '50px', color: '#9FDD94'}}> {current_user} </div> */}
+          <div style={{ fontSize: '50px', color: '#9FDD94' }}>
+            {/* {current_user} <span style={{ fontSize: '30px', top: '-5px', position: 'relative' }}>◀</span> */}
+          </div>
+          {/* <div style={{ fontSize: '16px', color: '#9FDD94', marginBottom: '10px' }}>Select User:</div> */}
+          <select
+            onChange={(e) => setCurrentUser(e.target.value)}
+            value={current_user}
+            style={{
+              fontSize: '50px',
+              color: '#9FDD94',
+              backgroundColor: 'transparent', 
+              borderColor: 'transparent',
+              borderRadius: '5px',
+              padding: '5px 10px',
+              cursor: 'pointer',
+              position: 'relative',
+              left: '-15px',
+            }}
+          >
+            {/* might need to modify this area to read alist of users and render them in the UI */}
+            <option value="User1">User 1</option> 
+            <option value="User2">User 2</option>
+            <option value="User3">User 3</option>
+          </select>
+          <button onClick={triggerNotification} style={{...styles.button, position: 'absolute', height: '20px', width: '20px', bottom: '5px' }}></button>
           {videoUrl && <video 
           src={videoUrl} 
           autoPlay 
@@ -1274,9 +1316,33 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
           <img src={logoImg} alt="Intellidesk Logo" style={{ width: '286px', height: 'auto' }} />
           <div >{postureNudge && <IoIosBody style={{ color: '#EE5757', top: '10px', left: '10px' }}/>}</div>
           <div style={styles.horizontalLine}></div>
-          <div style={{ fontSize: '50px', color: '#9FDD94'}}> {current_user} </div>
+          {/* <div style={{ fontSize: '50px', color: '#9FDD94'}}> {current_user} </div> */}
+          <div style={{ fontSize: '50px', color: '#9FDD94' }}>
+            {/* {current_user} <span style={{ fontSize: '30px', top: '-5px', position: 'relative' }}>◀</span> */}
+          </div>
+          {/* <div style={{ fontSize: '16px', color: '#9FDD94', marginBottom: '10px' }}>Select User:</div> */}
+          <select
+            onChange={(e) => setCurrentUser(e.target.value)}
+            value={current_user}
+            style={{
+              fontSize: '50px',
+              color: '#9FDD94',
+              backgroundColor: 'transparent', 
+              borderColor: 'transparent',
+              borderRadius: '5px',
+              padding: '5px 10px',
+              cursor: 'pointer',
+              position: 'relative',
+              left: '-15px',
+            }}
+          >
+            {/* might need to modify this area to read alist of users and render them in the UI */}
+            <option value="User1">User 1</option> 
+            <option value="User2">User 2</option>
+            <option value="User3">User 3</option>
+          </select>
           <Clock style={{ position: 'absolute', top: '150px', left: '40px', fontSize: '130px', fontFamily: 'Open Sans, sans-serif' }}/>
-          <button onClick={triggerNotification}></button>
+          <button onClick={triggerNotification} style={{...styles.button, position: 'absolute', height: '20px', width: '20px', bottom: '5px' }}></button>
         </div>
         <div style={styles.verticalLine}></div>
         <div style={{ position: 'relative', height: '100%', width: '55%', top: '10px', left: '10px' }}>
