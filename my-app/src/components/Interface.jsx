@@ -259,6 +259,19 @@ const Interface = () => {
   const [thickUnit, setThickUnit] = useState('CM')
   const [currentValue, setCurrentValue] = useState(1)
   const [currentValueConfig, setCurrentValueConfig] = useState(1)
+  const [userList, setUserList] = useState([])
+  const [user, setUser] = useState('');
+
+
+  useEffect(()=> {
+    const usersRef = query(ref(database, 'Controls/FaceEmbeddings'));
+  onValue(usersRef, (snapshot) => {
+    const data = snapshot.val();
+    
+    setUserList(Object.keys(data));
+    console.log(userList);
+  })
+},[user])
 
   // Example button to trigger the notification ( MODIFY TO ACCEPT STATE FROM FIREBASE)
   useEffect(() => {
@@ -451,7 +464,7 @@ const Interface = () => {
           setPostureGradient(createGradient(processedData));
         }
       });
-  }, [screenIndex]);
+  }, [screenIndex,current_user]);
 
   const [activeStates, setActiveStates] = useState({});
 
@@ -661,6 +674,24 @@ const Interface = () => {
       console.error("Error updating thickness in Firebase", error);
     });
   };
+
+  // Adjusted function to update thickness in Firebase with unit consideration
+  const updateUserInFirebase = (current_user) => {
+    let user = current_user;
+
+    const postCamRef = ref(database, `Controls/PostureCamera`);
+    set(postCamRef, 0).catch((error) => {
+      console.error("Error turning off Posture Camera", error);
+    });
+
+    const userRef = ref(database, `Controls/User`);
+    set(userRef, user).catch((error) => {
+      console.error("Error updating user in Firebase", error);
+    });
+  };
+
+
+
   // Function to handle increase thickness
   const handleIncreaseThickness = () => {
     setThickness(prevThickness => {
@@ -864,7 +895,7 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
         setSitStandGradient(createGradient(processedData));
       }
     });
-  }, [screenIndex]);
+  }, [screenIndex,current_user]);
 
   // Function to process data and generate gradient
   const processSitStandData = (data) => {
@@ -896,7 +927,7 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
         setEyeScreenGradient(createGradient(processedData));
       }
     });
-  }, [screenIndex]);
+  }, [screenIndex,current_user]);
 
   // Function to process data and generate gradient
   const processEyeScreenDistanceData = (data) => {
@@ -1151,7 +1182,12 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
             </div>
             {/* <div style={{ fontSize: '16px', color: '#9FDD94', marginBottom: '10px' }}>Select User:</div> */}
             <select
-              onChange={(e) => setCurrentUser(e.target.value)}
+              onChange={(e) => 
+                {
+                  setCurrentUser(e.target.value)
+                  updateUserInFirebase(e.target.value); // Ensure this is called
+                }
+              }
               value={current_user}
               style={{
                 fontSize: '50px',
@@ -1165,10 +1201,10 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
                 left: '-15px',
               }}
             >
-              {/* might need to modify this area to read alist of users and render them in the UI */}
-              <option value="User1">User 1</option> 
-              <option value="User2">User 2</option>
-              <option value="User3">User 3</option>
+                {userList.map((user) => (
+            //clicking on the user should change the user in the profile header
+            <option key={user} value={user} >{user} </option>
+          ))}
             </select>
             <div style={{ fontSize: '40px', color: '#FFFFFF', paddingTop: '10px'}}>Table Height:</div>
             <div style={{ textAlign: 'right', position: 'relative', left: '-10px' }}>
@@ -1233,25 +1269,30 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
           </div>
           {/* <div style={{ fontSize: '16px', color: '#9FDD94', marginBottom: '10px' }}>Select User:</div> */}
           <select
-            onChange={(e) => setCurrentUser(e.target.value)}
-            value={current_user}
-            style={{
-              fontSize: '50px',
-              color: '#9FDD94',
-              backgroundColor: 'transparent', 
-              borderColor: 'transparent',
-              borderRadius: '5px',
-              padding: '5px 10px',
-              cursor: 'pointer',
-              position: 'relative',
-              left: '-15px',
-            }}
-          >
-            {/* might need to modify this area to read alist of users and render them in the UI */}
-            <option value="User1">User 1</option> 
-            <option value="User2">User 2</option>
-            <option value="User3">User 3</option>
-          </select>
+              onChange={(e) => 
+                {
+                  setCurrentUser(e.target.value)
+                  updateUserInFirebase(e.target.value); // Ensure this is called
+                }
+              }
+              value={current_user}
+              style={{
+                fontSize: '50px',
+                color: '#9FDD94',
+                backgroundColor: 'transparent', 
+                borderColor: 'transparent',
+                borderRadius: '5px',
+                padding: '5px 10px',
+                cursor: 'pointer',
+                position: 'relative',
+                left: '-15px',
+              }}
+            >
+                {userList.map((user) => (
+            //clicking on the user should change the user in the profile header
+            <option key={user} value={user} >{user} </option>
+          ))}
+            </select>
           <button onClick={triggerNotification} style={{...styles.button, position: 'absolute', height: '20px', width: '20px', bottom: '5px' }}></button>
           {videoUrl && <video 
           src={videoUrl} 
