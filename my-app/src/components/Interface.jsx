@@ -317,13 +317,13 @@ const Interface = () => {
         setPostureNudge(true);
         switch (data) {
           case "1":
-            setVideoUrl("/assets/videos/stand_crop.mp4");
+            setVideoUrl("/assets/videos/stand-crop-unscreen.gif");
             break
           case "2":
-            setVideoUrl("/assets/videos/back_pain_crop.mp4");
+            setVideoUrl("/assets/videos/back-pain-crop-unscreen.gif");
             break
           case "3":
-            setVideoUrl("/assets/videos/eye_dist_crop.mp4");
+            setVideoUrl("/assets/videos/eye-dist-crop-unscreen.gif");
             break
         }
         triggerNotification();
@@ -331,7 +331,7 @@ const Interface = () => {
       else {
         console.log("Posture Nudge is off");
         setPostureNudge(false);
-        setVideoUrl("/assets/videos/idle_crop.mp4");
+        setVideoUrl("/assets/videos/idle-crop-unscreen.gif");
       }
     });
   }, [screenIndex, postureNudge]);
@@ -1309,10 +1309,8 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
             </select>
           {/* <button onClick={triggerNotification} style={{...styles.button, position: 'absolute', height: '20px', width: '20px', bottom: '5px' }}></button> */}
           {isModalVisible && <Modal closeModal={handleCloseModal} />}
-          {videoUrl && <video 
+          {videoUrl && <img
           src={videoUrl} 
-          autoPlay 
-          loop
           style={{
             width: '100%',
             height: '220px', 
@@ -1404,10 +1402,8 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
         <div style={styles.verticalLine}></div>
         <div style={{ position: 'relative', height: '100%', width: '55%', top: '10px', left: '10px' }}>
         <div style={idlePgContainerStyle}>
-          {videoUrl && <video 
+          {videoUrl && <img 
             src={videoUrl} 
-            autoPlay 
-            loop
             style={{
               width: '50%',
               height: 'auto', 
