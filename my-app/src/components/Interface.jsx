@@ -1,4 +1,5 @@
 import React, { useState , useEffect} from 'react';
+import Modal from './Modal';
 import "../App.css";
 import database from '../firebase'; // Adjust the path as needed
 import { ref, set , query, limitToLast, onValue, startAt, endAt, orderByKey} from 'firebase/database';
@@ -207,22 +208,30 @@ const Interface = () => {
   // Inline style for the glowing effect
   const glowStyle = {
     boxShadow: isNotifying ? 'inset 0 0 45px 20px rgba(145, 232, 130)' : 'none',
-    transition: 'box-shadow 0.5s ease-in-out',
+    animation: isNotifying ? 'glow-animation 2s ease-in-out infinite' : 'none',
+    // transition: 'box-shadow 0.5s ease-in-out',
   };
   const containerStyleWithGlow = {
     ...glowStyle,
     ...styles.container,
   };
 
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
   // Trigger the notification effect
   const triggerNotification = () => {
     setIsNotifying(true);
-    setTimeout(() => {
-      setIsNotifying(false);
-    }, 5000); // 5 seconds duration
+    setIsModalVisible(true);
+    // setTimeout(() => {
+    //   setIsNotifying(false);
+    // }, 5000); // 5 seconds duration
   };
 
-  
+  // Function to close the modal and stop the notification
+  const handleCloseModal = () => {
+    setIsModalVisible(false);
+    setIsNotifying(false); // Stop the glow animation
+  };
 
   // Handler functions for swipe actions
   // const handleSwipedLeft = () => setScreenIndex((prev) => prev + 1);
@@ -273,29 +282,23 @@ const Interface = () => {
   })
 },[user])
 
-  // Example button to trigger the notification ( MODIFY TO ACCEPT STATE FROM FIREBASE)
-  useEffect(() => {
-    if (postureNudge) {
-      const intervalId = setInterval(() => {
-        // Toggle the notification state to create a blinking effect
-        triggerNotification();
-      }, 5000); // 5000 milliseconds = 5 seconds
+  // // Example button to trigger the notification ( MODIFY TO ACCEPT STATE FROM FIREBASE)
+  // useEffect(() => {
+  //   if (postureNudge) {
+  //     const intervalId = setInterval(() => {
+  //       // Toggle the notification state to create a blinking effect
+  //       triggerNotification();
+  //     }, 5000); // 5000 milliseconds = 5 seconds
   
-      // Clean up interval on component unmount or if postureNudge becomes 0
-      // return () => clearInterval(intervalId);
-    }
-  }, [postureNudge]);
+  //     // Clean up interval on component unmount or if postureNudge becomes 0
+  //     // return () => clearInterval(intervalId);
+  //   }
+  // }, [postureNudge]);
 
   const handlePageSelect = (pageIndex) => {
     setScreenIndex(pageIndex);
   };
 
-  // const presets = {
-  //   sitting: 120.0,
-  //   standing: 150.0,
-  //   elevated1: 180.0,
-  //   elevated2: 200.0,
-  // };
   const [presets, setPresets] = useState({
     1: 120.0,
     2: 150.0,
@@ -305,9 +308,11 @@ const Interface = () => {
 
   // Retrieve nudging status
   useEffect(() => {
+    console.log("Posture Nudge is loop");
     const postureRef = query(ref(database, `/Controls/PostureNudge`));
     onValue(postureRef, (snapshot) => {
       const data = snapshot.val();
+      console.log('data'+data)
       if (data!=="0") {
         setPostureNudge(true);
         switch (data) {
@@ -324,13 +329,12 @@ const Interface = () => {
         triggerNotification();
       }
       else {
+        console.log("Posture Nudge is off");
         setPostureNudge(false);
         setVideoUrl("/assets/videos/idle_crop.mp4");
       }
     });
-  }, [screenIndex]);
-
-
+  }, [screenIndex, postureNudge]);
 
   // TODO: Retrieve active user from DB
   useEffect(() => {
@@ -382,23 +386,6 @@ const Interface = () => {
       onValue(thicknessRef, (snapshot) => {
         setThickness(snapshot.val());
       });
-
-      // const presetsRef = ref(database, `${current_user}/Controls`);
-
-      // onValue(presetsRef, (snapshot) => {
-      //   const data = snapshot.val();
-      //   console.log(data)
-      //   if (data) {
-      //     const newPresets = {
-      //       sitting: data.preset1,
-      //       standing: data.preset2,
-      //       elevated1: data.preset3,
-      //       elevated2: data.preset4,
-      //     };
-      //     setPresets(newPresets);
-      //   }
-      // });
-
     };
   
     fetchData();
@@ -1171,6 +1158,19 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
       <div style={pageIndicatorContainerStyle}>
         <PageIndicator totalPages={totalPages} currentPage={screenIndex} onPageSelect={handlePageSelect} />
       </div>
+      <style>{`
+        @keyframes glow-animation {
+          0% {
+            box-shadow: inset 0 0 45px 20px rgba(145, 232, 130, 1.0);
+          }
+          50% {
+            box-shadow: inset 0 0 45px 25px rgba(145, 232, 130, 0.45);
+          }
+          100% {
+            box-shadow: inset 0 0 45px 20px rgba(145, 232, 130, 0.95);
+          }
+        }
+      `}</style>
       {screenIndex === 0 && (
         <div style={containerStyleWithGlow}>
           <div style={{ position: 'relative', height: '100%', width: '30%', top: '15px', left: '10px' }}>
@@ -1211,7 +1211,8 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
               <div style={{ color: '#9FDD94', fontSize: '110px' }}>{height}</div>
               <div style={{ fontSize: '45px', bottom: '15px', position: 'relative' }}>{heightUnit}</div>
             </div>
-            <button onClick={triggerNotification} style={{...styles.button, position: 'absolute', height: '20px', width: '20px', bottom: '5px' }}></button>
+            {/* <button onClick={triggerNotification} style={{...styles.button, position: 'absolute', height: '20px', width: '20px', bottom: '5px' }}></button> */}
+            {isModalVisible && <Modal closeModal={handleCloseModal} />}
           </div>
           <div style={{...styles.buttonGroup, width: '40%', margin: 0}}>
             <div style={{...styles.buttonContainer, width: 'fit-content'}}>
@@ -1256,6 +1257,19 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
           </div>
         </div>
       )}
+      <style>{`
+        @keyframes glow-animation {
+          0% {
+            box-shadow: inset 0 0 45px 20px rgba(145, 232, 130, 1.0);
+          }
+          50% {
+            box-shadow: inset 0 0 45px 25px rgba(145, 232, 130, 0.45);
+          }
+          100% {
+            box-shadow: inset 0 0 45px 20px rgba(145, 232, 130, 0.95);
+          }
+        }
+      `}</style>
       {screenIndex === 1 && (
         // Your second screen JSX
       <div style={{...containerStyleWithGlow, gap: '1%'}}>
@@ -1293,7 +1307,8 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
             <option key={user} value={user} >{user} </option>
           ))}
             </select>
-          <button onClick={triggerNotification} style={{...styles.button, position: 'absolute', height: '20px', width: '20px', bottom: '5px' }}></button>
+          {/* <button onClick={triggerNotification} style={{...styles.button, position: 'absolute', height: '20px', width: '20px', bottom: '5px' }}></button> */}
+          {isModalVisible && <Modal closeModal={handleCloseModal} />}
           {videoUrl && <video 
           src={videoUrl} 
           autoPlay 
@@ -1383,7 +1398,8 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
             <option value="User3">User 3</option>
           </select>
           <Clock style={{ position: 'absolute', top: '150px', left: '40px', fontSize: '130px', fontFamily: 'Open Sans, sans-serif' }}/>
-          <button onClick={triggerNotification} style={{...styles.button, position: 'absolute', height: '20px', width: '20px', bottom: '5px' }}></button>
+          {/* <button onClick={triggerNotification} style={{...styles.button, position: 'absolute', height: '20px', width: '20px', bottom: '5px' }}></button> */}
+          {isModalVisible && <Modal closeModal={handleCloseModal} />}
         </div>
         <div style={styles.verticalLine}></div>
         <div style={{ position: 'relative', height: '100%', width: '55%', top: '10px', left: '10px' }}>
