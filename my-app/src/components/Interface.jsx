@@ -420,7 +420,7 @@ const Interface = () => {
   }, [screenIndex]);
 
   useEffect(() => {
-  const presetRef = query(ref(database,'/Controls/'));
+  const presetRef = query(ref(database,current_user+'/Params/'));
   onValue(presetRef, (snapshot) => {
     const data = snapshot.val();
     const currValueConf = data[currentValue]
@@ -981,8 +981,8 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
   };
 
   const updatePresetInFirebase = (newPreset, index) => {
-    const heightRef = ref(database, `Controls/` + index);
-    console.log(`Controls/` + index)
+    const heightRef = ref(database, current_user+`/Params/` + index);
+    console.log(current_user+`/Params/` + index)
     console.log(newPreset)
     set(heightRef, newPreset).catch((error) => {
       console.error("Error updating height in Firebase", error);});
