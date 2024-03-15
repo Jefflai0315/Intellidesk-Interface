@@ -40,7 +40,7 @@ const Clock = ({ style }) => {
 
   const clockStyle = {
     fontSize: '60px',
-    color: '#9FDD94', // Choose a color that fits your UI's theme
+    color: '#A9FF9B', // Choose a color that fits your UI's theme
     fontFamily: 'Open Sans, bold, sans-serif',
     ...style 
   };
@@ -94,7 +94,7 @@ const Interface = () => {
       width: '130px', // Adjusted size to match image
       height: '170px',
       fontSize: '50px', // Larger font size if necessary
-      backgroundColor: '#9FDD94', // Match the dark theme in the image
+      backgroundColor: '#A9FF9B', // Match the dark theme in the image
       color: '#fff',
       border: 'none',
       borderRadius: '25px',
@@ -136,7 +136,7 @@ const Interface = () => {
       // borderRadius: '25px', // Allows the child to grow and fill the available space
     },
     activeButton: {
-      backgroundColor: '#9FDD94', 
+      backgroundColor: '#A9FF9B', 
       borderRadius: '25px',
     },
     icon: {
@@ -271,6 +271,15 @@ const Interface = () => {
   const [userList, setUserList] = useState([])
   const [user, setUser] = useState('');
 
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(current_user);
+
+  const handleSelectUser = (user) => {
+    setSelectedUser(user);
+    setCurrentUser(user);
+    updateUserInFirebase(user);
+    setDropdownOpen(false); // Close dropdown after selection
+  };
 
   useEffect(()=> {
     const usersRef = query(ref(database, 'Controls/FaceEmbeddings'));
@@ -491,6 +500,7 @@ const Interface = () => {
   };
 
   const handleButtonClick = (buttonKey) => {
+    // console.log(buttonKey);
     if (buttonKey === 'lockButton') {
       setIsLocked(!isLocked);
       return;
@@ -767,12 +777,12 @@ const Interface = () => {
 
   const getButtonStyleP = (preset) => ({
     ...baseButtonStyleP,
-    backgroundColor: activePreset === preset ? '#9FDD94' : '#444444', // Change background color if active
+    backgroundColor: activePreset === preset ? '#A9FF9B' : '#444444', // Change background color if active
   });
 
   const getButtonStyleC = (buttonKey) => ({
     ...baseButtonStyleC,
-    backgroundColor: activeButtons[buttonKey] ? '#9FDD94' : '#444444', // Change background color if active
+    backgroundColor: activeButtons[buttonKey] ? '#A9FF9B' : '#444444', // Change background color if active
   });
 
   const getButtonStyleForTheme = (settingsPg) => {
@@ -780,7 +790,7 @@ const Interface = () => {
     return {
       // fontWeight: isBold ? 'bold' : 'normal',
       // Add other conditional styles based on isActive or theme
-      backgroundColor: isBold ? '#9FDD94' : '#444444',
+      backgroundColor: isBold ? '#A9FF9B' : '#444444',
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
@@ -1062,13 +1072,13 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
           <div style={{ position: 'relative',fontFamily: 'Open Sans, sans-serif',fontSize: '65px',fontWeight: 'bold',color: 'black',textAlign: 'right',right: '15px',top: '5px' }}>{currentValueConfig} cm</div>
         </div>
         <div style={styles.buttonGroup}>
-          <button onClick={() => handleButtonClick('increaseHeight')} style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '110px',height: '140px',fontFamily: 'Open Sans, sans-serif', fontSize: '50px', borderRadius: '25px',backgroundColor: '#9FDD94' }}>▲</button>
+          <button onClick={() => handleButtonClick('increaseHeight')} style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '110px',height: '140px',fontFamily: 'Open Sans, sans-serif', fontSize: '50px', borderRadius: '25px',backgroundColor: '#A9FF9B' }}>▲</button>
           <div>
             <button onClick={() => handleButtonClick('presetHeight')} style={{ backgroundColor: '#444444',height: '140px',width:'306px',borderRadius: '25px' }}>
               <div style={{ position: 'relative',fontFamily: 'Open Sans, sans-serif',fontSize: '55px',fontWeight: 'bold',color: 'white' }}>Height {currentValue}</div>
             </button>
           </div>
-          <button onClick={() => handleButtonClick('decreaseHeight')} style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '110px',height: '140px',fontFamily: 'Open Sans, sans-serif', fontSize: '50px', borderRadius: '25px',backgroundColor: '#9FDD94'}}>▼</button>
+          <button onClick={() => handleButtonClick('decreaseHeight')} style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '110px',height: '140px',fontFamily: 'Open Sans, sans-serif', fontSize: '50px', borderRadius: '25px',backgroundColor: '#A9FF9B'}}>▼</button>
         </div>
       </div>
     );
@@ -1081,8 +1091,8 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
           <div style={{ position: 'relative',fontFamily: 'Open Sans, sans-serif',fontSize: '65px',fontWeight: 'bold',color: 'black',textAlign: 'right',right: '15px',top: '50px' }}>{thickness} {thickUnit}</div>
         </div>
         <div style={styles.buttonGroup}>
-          <button onClick={handleIncreaseThickness} style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '268px',height: '140px',fontFamily: 'Open Sans, sans-serif', fontSize: '50px', borderRadius: '25px',backgroundColor: '#9FDD94' }}>▲</button>
-          <button onClick={handleDecreaseThickness} style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '268px',height: '140px',fontFamily: 'Open Sans, sans-serif', fontSize: '50px', borderRadius: '25px',backgroundColor: '#9FDD94'}}>▼</button>
+          <button onClick={handleIncreaseThickness} style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '268px',height: '140px',fontFamily: 'Open Sans, sans-serif', fontSize: '50px', borderRadius: '25px',backgroundColor: '#A9FF9B' }}>▲</button>
+          <button onClick={handleDecreaseThickness} style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '268px',height: '140px',fontFamily: 'Open Sans, sans-serif', fontSize: '50px', borderRadius: '25px',backgroundColor: '#A9FF9B'}}>▼</button>
         </div>
       </div>
     );
@@ -1096,8 +1106,8 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
           <div style={{ position: 'relative',fontFamily: 'Open Sans, sans-serif',fontSize: '75px',fontWeight: 'bold',color: 'black',textAlign: 'right',right: '15px',top: '40px' }}>{sensitivity}</div>
         </div>
         <div style={styles.buttonGroup}>
-          <button onClick={handleIncreaseSensitivity} style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '268px',height: '140px',fontFamily: 'Open Sans, sans-serif', fontSize: '50px', borderRadius: '25px',backgroundColor: '#9FDD94' }}>▲</button>
-          <button onClick={handleDecreaseSensitivity} style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '268px',height: '140px',fontFamily: 'Open Sans, sans-serif', fontSize: '50px', borderRadius: '25px',backgroundColor: '#9FDD94'}}>▼</button>
+          <button onClick={handleIncreaseSensitivity} style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '268px',height: '140px',fontFamily: 'Open Sans, sans-serif', fontSize: '50px', borderRadius: '25px',backgroundColor: '#A9FF9B' }}>▲</button>
+          <button onClick={handleDecreaseSensitivity} style={{display: 'flex',justifyContent: 'center',alignItems: 'center',width: '268px',height: '140px',fontFamily: 'Open Sans, sans-serif', fontSize: '50px', borderRadius: '25px',backgroundColor: '#A9FF9B'}}>▼</button>
         </div>
       </div>
     );
@@ -1115,7 +1125,7 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
             onClick={() => handleButtonClick('changeCM')}
             style={{
               ...styles.boldButton,
-              backgroundColor: selectedUnit === 'CM' ? '#9FDD94' : '#444444', // Toggle color based on selection
+              backgroundColor: selectedUnit === 'CM' ? '#A9FF9B' : '#444444', // Toggle color based on selection
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
@@ -1133,7 +1143,7 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
             onClick={() => handleButtonClick('changeIN')}
             style={{
               ...styles.boldButton,
-              backgroundColor: selectedUnit === 'IN' ? '#9FDD94' : '#444444', // Toggle color based on selection
+              backgroundColor: selectedUnit === 'IN' ? '#A9FF9B' : '#444444', // Toggle color based on selection
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
@@ -1177,11 +1187,73 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
             <img src={logoImg} alt="Intellidesk Logo" style={{ width: '286px', height: 'auto' }} />
             <div >{postureNudge && <IoIosBody style={{ color: '#EE5757', top: '10px', left: '10px' }}/>}</div>
             <div style={styles.horizontalLine}></div>
-            <div style={{ fontSize: '50px', color: '#9FDD94' }}>
+            <div style={{ fontSize: '50px', color: '#A9FF9B' }}>
               {/* {current_user} <span style={{ fontSize: '30px', top: '-5px', position: 'relative' }}>◀</span> */}
             </div>
-            {/* <div style={{ fontSize: '16px', color: '#9FDD94', marginBottom: '10px' }}>Select User:</div> */}
-            <select
+            {/* <div style={{ fontSize: '16px', color: '#A9FF9B', marginBottom: '10px' }}>Select User:</div> */}
+            
+            <div
+              style={{
+                position: 'relative',
+                fontSize: '50px',
+                color: '#A9FF9B',
+                backgroundColor: '#000',
+                paddingTop: '5px',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}
+              onClick={() => setDropdownOpen(!dropdownOpen)}
+            >
+              {selectedUser}
+              <span
+                style={{
+                  marginLeft: '10px',
+                  fontSize: '27px',
+                  transition: 'transform 0.2s ease-in-out',
+                  transform: dropdownOpen ? 'rotate(-90deg)' : 'rotate(0deg)', // Rotate arrow based on `dropdownOpen`
+                  display: 'inline-block',
+                  position: 'relative',
+                  top: '5px',
+                  right: '20px',
+                }}
+              >
+                ◀
+              </span>
+              {dropdownOpen && (
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: '100%',
+                    left: 0,
+                    right: 0,
+                    backgroundColor: '#3B3B3B',
+                    borderRadius: '5px',
+                    maxHeight: '240px', 
+                    overflowY: 'auto',
+                    zIndex: 100,
+                  }}
+                >
+                  {userList.map((user) => (
+                    <div
+                      key={user}
+                      style={{
+                        padding: '10px',
+                        backgroundColor: selectedUser === user ? '#444' : 'transparent', // Highlight selected user
+                        color: selectedUser === user ? '#A9FF9B' : '#FFF',
+                      }}
+                      onClick={() => handleSelectUser(user)}
+                    >
+                      {user}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+
+            {/* <select
               onChange={(e) => 
                 {
                   setCurrentUser(e.target.value)
@@ -1191,8 +1263,8 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
               value={current_user}
               style={{
                 fontSize: '50px',
-                color: '#9FDD94',
-                backgroundColor: 'transparent', 
+                color: '#A9FF9B',
+                backgroundColor: '#000', 
                 borderColor: 'transparent',
                 borderRadius: '5px',
                 padding: '5px 10px',
@@ -1205,10 +1277,10 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
             //clicking on the user should change the user in the profile header
             <option key={user} value={user} >{user} </option>
           ))}
-            </select>
+            </select> */}
             <div style={{ fontSize: '40px', color: '#FFFFFF', paddingTop: '10px'}}>Table Height:</div>
             <div style={{ textAlign: 'right', position: 'relative', left: '-10px' }}>
-              <div style={{ color: '#9FDD94', fontSize: '110px' }}>{height}</div>
+              <div style={{ color: '#A9FF9B', fontSize: '110px' }}>{height}</div>
               <div style={{ fontSize: '45px', bottom: '15px', position: 'relative' }}>{heightUnit}</div>
             </div>
             {/* <button onClick={triggerNotification} style={{...styles.button, position: 'absolute', height: '20px', width: '20px', bottom: '5px' }}></button> */}
@@ -1237,7 +1309,7 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
                   height: '170px',
                   fontSize: '50px',
                   borderRadius: '25px',
-                  backgroundColor: isLocked ? '#9FDD94' : '#444444', // Change to your default color
+                  backgroundColor: isLocked ? '#A9FF9B' : '#444444', // Change to your default color
                 }}
               >
                 <img
@@ -1277,12 +1349,73 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
           <img src={logoImg} alt="Intellidesk Logo" style={{ width: '286px', height: 'auto' }} />
           <div >{postureNudge && <IoIosBody style={{ color: '#EE5757', top: '10px', left: '10px' }}/>}</div>
           <div style={styles.horizontalLine}></div>
-          {/* <div style={{ fontSize: '50px', color: '#9FDD94'}}> {current_user} </div> */}
-          <div style={{ fontSize: '50px', color: '#9FDD94' }}>
+          {/* <div style={{ fontSize: '50px', color: '#A9FF9B'}}> {current_user} </div> */}
+          <div style={{ fontSize: '50px', color: '#A9FF9B' }}>
             {/* {current_user} <span style={{ fontSize: '30px', top: '-5px', position: 'relative' }}>◀</span> */}
           </div>
-          {/* <div style={{ fontSize: '16px', color: '#9FDD94', marginBottom: '10px' }}>Select User:</div> */}
-          <select
+
+          <div
+              style={{
+                position: 'relative',
+                fontSize: '50px',
+                color: '#A9FF9B',
+                backgroundColor: '#000',
+                paddingTop: '5px',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}
+              onClick={() => setDropdownOpen(!dropdownOpen)}
+            >
+              {selectedUser}
+              <span
+                style={{
+                  marginLeft: '10px',
+                  fontSize: '27px',
+                  transition: 'transform 0.2s ease-in-out',
+                  transform: dropdownOpen ? 'rotate(-90deg)' : 'rotate(0deg)', // Rotate arrow based on `dropdownOpen`
+                  display: 'inline-block',
+                  position: 'relative',
+                  top: '5px',
+                  right: '-8px',
+                }}
+              >
+                ◀
+              </span>
+              {dropdownOpen && (
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: '100%',
+                    left: 0,
+                    right: 0,
+                    backgroundColor: '#3B3B3B',
+                    borderRadius: '5px',
+                    maxHeight: '240px', 
+                    overflowY: 'auto',
+                    zIndex: 100,
+                  }}
+                >
+                  {userList.map((user) => (
+                    <div
+                      key={user}
+                      style={{
+                        padding: '10px',
+                        backgroundColor: selectedUser === user ? '#444' : 'transparent', // Highlight selected user
+                        color: selectedUser === user ? '#A9FF9B' : '#FFF',
+                      }}
+                      onClick={() => handleSelectUser(user)}
+                    >
+                      {user}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+          {/* <div style={{ fontSize: '16px', color: '#A9FF9B', marginBottom: '10px' }}>Select User:</div> */}
+          {/* <select
               onChange={(e) => 
                 {
                   setCurrentUser(e.target.value)
@@ -1292,7 +1425,7 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
               value={current_user}
               style={{
                 fontSize: '50px',
-                color: '#9FDD94',
+                color: '#A9FF9B',
                 backgroundColor: 'transparent', 
                 borderColor: 'transparent',
                 borderRadius: '5px',
@@ -1306,7 +1439,7 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
             //clicking on the user should change the user in the profile header
             <option key={user} value={user} >{user} </option>
           ))}
-            </select>
+            </select> */}
           {/* <button onClick={triggerNotification} style={{...styles.button, position: 'absolute', height: '20px', width: '20px', bottom: '5px' }}></button> */}
           {isModalVisible && <Modal closeModal={handleCloseModal} />}
           {videoUrl && <img
@@ -1339,7 +1472,7 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
           <div style={{ ...styles.buttonContainer, padding: '20px', marginTop: '0', paddingBottom: '20px' }}>
           <div style={styles.label}>Posture</div>
           <div style={{fontSize: '70px', textAlign: 'right', paddingRight: '40px'}}>
-            <span style={{color: '#9FDD94'}}>{averageScore}</span>
+            <span style={{color: '#A9FF9B'}}>{averageScore}</span>
             <span style={{fontSize: '40px'}}>/100</span>
           </div>
           <div style={styles.progressBarS}>
@@ -1350,7 +1483,7 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
           <div style={{ ...styles.buttonContainer, padding: '15px', marginTop: '0'  }}>
             <div style={styles.label}>Screen-Eye Distance</div>
             <div style={{ fontSize: '70px', color: '#FFFFFF', textAlign: 'right', paddingRight: '30px'}}> 
-              <span style={{color: '#9FDD94'}}>{averageDistance.toFixed(0)}</span>
+              <span style={{color: '#A9FF9B'}}>{averageDistance.toFixed(0)}</span>
               <span style={{fontSize: '40px'}}>cm</span>
             </div>
             <div style={styles.progressBarS}>
@@ -1370,31 +1503,97 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
           <img src={logoImg} alt="Intellidesk Logo" style={{ width: '286px', height: 'auto' }} />
           <div >{postureNudge && <IoIosBody style={{ color: '#EE5757', top: '10px', left: '10px' }}/>}</div>
           <div style={styles.horizontalLine}></div>
-          {/* <div style={{ fontSize: '50px', color: '#9FDD94'}}> {current_user} </div> */}
-          <div style={{ fontSize: '50px', color: '#9FDD94' }}>
+          {/* <div style={{ fontSize: '50px', color: '#A9FF9B'}}> {current_user} </div> */}
+          <div style={{ fontSize: '50px', color: '#A9FF9B' }}>
             {/* {current_user} <span style={{ fontSize: '30px', top: '-5px', position: 'relative' }}>◀</span> */}
           </div>
-          {/* <div style={{ fontSize: '16px', color: '#9FDD94', marginBottom: '10px' }}>Select User:</div> */}
-          <select
-            onChange={(e) => setCurrentUser(e.target.value)}
-            value={current_user}
-            style={{
-              fontSize: '50px',
-              color: '#9FDD94',
-              backgroundColor: 'transparent', 
-              borderColor: 'transparent',
-              borderRadius: '5px',
-              padding: '5px 10px',
-              cursor: 'pointer',
-              position: 'relative',
-              left: '-15px',
-            }}
-          >
-            {/* might need to modify this area to read alist of users and render them in the UI */}
-            <option value="User1">User 1</option> 
-            <option value="User2">User 2</option>
-            <option value="User3">User 3</option>
-          </select>
+          {/* <div style={{ fontSize: '16px', color: '#A9FF9B', marginBottom: '10px' }}>Select User:</div> */}
+          
+          <div
+              style={{
+                position: 'relative',
+                fontSize: '50px',
+                color: '#A9FF9B',
+                backgroundColor: '#000',
+                paddingTop: '5px',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}
+              onClick={() => setDropdownOpen(!dropdownOpen)}
+            >
+              {selectedUser}
+              <span
+                style={{
+                  marginLeft: '10px',
+                  fontSize: '27px',
+                  transition: 'transform 0.2s ease-in-out',
+                  transform: dropdownOpen ? 'rotate(-90deg)' : 'rotate(0deg)', // Rotate arrow based on `dropdownOpen`
+                  display: 'inline-block',
+                  position: 'relative',
+                  top: '5px',
+                  right: '296px',
+                }}
+              >
+                ◀
+              </span>
+              {dropdownOpen && (
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: '100%',
+                    left: 0,
+                    right: 0,
+                    backgroundColor: '#3B3B3B',
+                    borderRadius: '5px',
+                    maxHeight: '240px', 
+                    overflowY: 'auto',
+                    zIndex: 100,
+                  }}
+                >
+                  {userList.map((user) => (
+                    <div
+                      key={user}
+                      style={{
+                        padding: '10px',
+                        backgroundColor: selectedUser === user ? '#444' : 'transparent', // Highlight selected user
+                        color: selectedUser === user ? '#A9FF9B' : '#FFF',
+                      }}
+                      onClick={() => handleSelectUser(user)}
+                    >
+                      {user}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          
+          {/* <select
+              onChange={(e) => 
+                {
+                  setCurrentUser(e.target.value)
+                  updateUserInFirebase(e.target.value); // Ensure this is called
+                }
+              }
+              value={current_user}
+              style={{
+                fontSize: '50px',
+                color: '#A9FF9B',
+                backgroundColor: 'transparent', 
+                borderColor: 'transparent',
+                borderRadius: '5px',
+                padding: '5px 10px',
+                cursor: 'pointer',
+                position: 'relative',
+                left: '-15px',
+              }}
+            >
+                {userList.map((user) => (
+            //clicking on the user should change the user in the profile header
+            <option key={user} value={user} >{user} </option>
+          ))}
+            </select> */}
           <Clock style={{ position: 'absolute', top: '150px', left: '40px', fontSize: '130px', fontFamily: 'Open Sans, sans-serif' }}/>
           {/* <button onClick={triggerNotification} style={{...styles.button, position: 'absolute', height: '20px', width: '20px', bottom: '5px' }}></button> */}
           {isModalVisible && <Modal closeModal={handleCloseModal} />}
