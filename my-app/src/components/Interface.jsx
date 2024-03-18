@@ -222,9 +222,6 @@ const Interface = () => {
   const triggerNotification = () => {
     setIsNotifying(true);
     setIsModalVisible(true);
-    // setTimeout(() => {
-    //   setIsNotifying(false);
-    // }, 5000); // 5 seconds duration
   };
 
   // Function to close the modal and stop the notification
@@ -565,7 +562,6 @@ const Interface = () => {
     }
   };
   
-  
 //   // Function to handle button click
 //   const handleButtonClick = (buttonKey) => {
 //     if (buttonKey === 'lockButton') {
@@ -597,8 +593,6 @@ const Interface = () => {
 //         }
 //         return "CM"; // Convert string back to float
 //       });
-
-
       
 //     } else if (buttonKey === 'changeIN') {
 //       setSelectedUnit('IN'); // Set the unit to inches
@@ -687,8 +681,6 @@ const Interface = () => {
     });
   };
 
-
-
   // Function to handle increase thickness
   const handleIncreaseThickness = () => {
     setThickness(prevThickness => {
@@ -746,6 +738,18 @@ const Interface = () => {
       updateSensInFirebase(curSens);
       return curSens
     }); // Prevents the value going below 1
+  };
+
+  // Function to update 'Controls/DetectUser' in Firebase to '1'
+  const updateDetectUserInFirebase = () => {
+    const detectUserRef = ref(database, `Controls/DetectUser`);
+    set(detectUserRef, 1)
+      .then(() => {
+        console.log("DetectUser updated successfully.");
+      })
+      .catch((error) => {
+        console.error("Error updating DetectUser in Firebase", error);
+      });
   };
 
   const [activePreset, setActivePreset] = useState(null);
@@ -876,7 +880,6 @@ const Interface = () => {
       gradientArray.push({ color, start, end });
     });
   return gradientArray;
-    
   };
 
   useEffect(() => {
@@ -907,7 +910,6 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
       gradientArray.push({ color, start, end });
     });
   return gradientArray;
-    
   };
 
   useEffect(() => {
@@ -959,8 +961,6 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
     );
     return `linear-gradient(to right, ${colorStops.join(', ')})`;
   };
-  
-  
 
   const applyPreset = (presetHeight) => {
     if (presetHeight !== undefined && !isNaN(presetHeight)) {
@@ -1278,6 +1278,7 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
             <option key={user} value={user} >{user} </option>
           ))}
             </select> */}
+            <button onClick={updateDetectUserInFirebase}>Detect User</button>
             <div style={{ fontSize: '40px', color: '#FFFFFF', paddingTop: '10px'}}>Table Height:</div>
             <div style={{ textAlign: 'right', position: 'relative', left: '-10px' }}>
               <div style={{ color: '#A9FF9B', fontSize: '110px' }}>{height}</div>
@@ -1353,7 +1354,6 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
           <div style={{ fontSize: '50px', color: '#A9FF9B' }}>
             {/* {current_user} <span style={{ fontSize: '30px', top: '-5px', position: 'relative' }}>◀</span> */}
           </div>
-
           <div
               style={{
                 position: 'relative',
@@ -1508,7 +1508,6 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
             {/* {current_user} <span style={{ fontSize: '30px', top: '-5px', position: 'relative' }}>◀</span> */}
           </div>
           {/* <div style={{ fontSize: '16px', color: '#A9FF9B', marginBottom: '10px' }}>Select User:</div> */}
-          
           <div
               style={{
                 position: 'relative',
