@@ -1440,6 +1440,7 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
             <option key={user} value={user} >{user} </option>
           ))}
             </select> */}
+            <button onClick={updateDetectUserInFirebase}></button>
           {/* <button onClick={triggerNotification} style={{...styles.button, position: 'absolute', height: '20px', width: '20px', bottom: '5px' }}></button> */}
           {isModalVisible && <Modal closeModal={handleCloseModal} />}
           {videoUrl && <img
@@ -1567,7 +1568,7 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
                 </div>
               )}
             </div>
-          
+            <button onClick={updateDetectUserInFirebase}></button>
           {/* <select
               onChange={(e) => 
                 {
