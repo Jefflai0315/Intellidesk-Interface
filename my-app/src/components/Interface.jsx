@@ -1278,7 +1278,7 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
             <option key={user} value={user} >{user} </option>
           ))}
             </select> */}
-            <button onClick={updateDetectUserInFirebase}>Detect User</button>
+            <button onClick={updateDetectUserInFirebase}></button>
             <div style={{ fontSize: '40px', color: '#FFFFFF', paddingTop: '10px'}}>Table Height:</div>
             <div style={{ textAlign: 'right', position: 'relative', left: '-10px' }}>
               <div style={{ color: '#A9FF9B', fontSize: '110px' }}>{height}</div>
