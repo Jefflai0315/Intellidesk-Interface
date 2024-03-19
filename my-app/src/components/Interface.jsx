@@ -344,7 +344,7 @@ const Interface = () => {
 
   // TODO: Retrieve active user from DB
   useEffect(() => {
-    const userRef = ref(database, 'Controls/User');
+    const userRef = ref(database, 'Controls/UserTable');
       onValue(userRef, (snapshot) => {
         const user = snapshot.val(); // Convert to boolean
         setCurrentUser(user);
@@ -675,7 +675,7 @@ const Interface = () => {
       console.error("Error turning off Posture Camera", error);
     });
 
-    const userRef = ref(database, `Controls/User`);
+    const userRef = ref(database, `Controls/UserTable`);
     set(userRef, user).catch((error) => {
       console.error("Error updating user in Firebase", error);
     });
