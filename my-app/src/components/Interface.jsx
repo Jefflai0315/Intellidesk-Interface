@@ -258,7 +258,7 @@ const Interface = () => {
   const [EyeScreenGradient, setEyeScreenGradient] = useState('');
   const [SitStandGradient, setSitStandGradient] = useState('');
   const [averageScore, setAverageScore] = useState(0);
-  const [current_user, setCurrentUser] = useState('JARVIS');
+  const [current_user, setCurrentUser] = useState('');
   const [postureNudge,setPostureNudge] = useState(false);
   const [videoUrl, setVideoUrl] = useState('');
   const [heightUnit, setHeightUnit] = useState('CM');
@@ -266,8 +266,6 @@ const Interface = () => {
   const [currentValue, setCurrentValue] = useState(1)
   const [currentValueConfig, setCurrentValueConfig] = useState(1)
   const [userList, setUserList] = useState([])
-  const [user, setUser] = useState('');
-
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(current_user);
 
@@ -286,7 +284,7 @@ const Interface = () => {
     setUserList(Object.keys(data));
     console.log(userList);
   })
-},[user])
+},[current_user])
 
   // // Example button to trigger the notification ( MODIFY TO ACCEPT STATE FROM FIREBASE)
   // useEffect(() => {
@@ -344,12 +342,16 @@ const Interface = () => {
 
   // TODO: Retrieve active user from DB
   useEffect(() => {
+    const fetchUser = async () => {
     const userRef = ref(database, 'Controls/UserTable');
       onValue(userRef, (snapshot) => {
         const user = snapshot.val(); // Convert to boolean
         setCurrentUser(user);
+        setSelectedUser(user);
       });
-  }, [screenIndex]);
+    }
+    fetchUser();
+  }, [screenIndex,current_user]);
 
   // Retrieve the control states from DB
   useEffect(() => {
@@ -670,10 +672,10 @@ const Interface = () => {
   const updateUserInFirebase = (current_user) => {
     let user = current_user;
 
-    const postCamRef = ref(database, `Controls/PostureCamera`);
-    set(postCamRef, 0).catch((error) => {
-      console.error("Error turning off Posture Camera", error);
-    });
+    // const postCamRef = ref(database, `Controls/PostureCamera`);
+    // set(postCamRef, 0).catch((error) => {
+    //   console.error("Error turning off Posture Camera", error);
+    // });
 
     const userRef = ref(database, `Controls/UserTable`);
     set(userRef, user).catch((error) => {
