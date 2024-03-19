@@ -258,7 +258,7 @@ const Interface = () => {
   const [EyeScreenGradient, setEyeScreenGradient] = useState('');
   const [SitStandGradient, setSitStandGradient] = useState('');
   const [averageScore, setAverageScore] = useState(0);
-  const [current_user, setCurrentUser] = useState('');
+  const [current_user, setCurrentUser] = useState('JARVIS');
   const [postureNudge,setPostureNudge] = useState(false);
   const [videoUrl, setVideoUrl] = useState('');
   const [heightUnit, setHeightUnit] = useState('CM');
@@ -266,8 +266,12 @@ const Interface = () => {
   const [currentValue, setCurrentValue] = useState(1)
   const [currentValueConfig, setCurrentValueConfig] = useState(1)
   const [userList, setUserList] = useState([])
+  const [user, setUser] = useState('');
+
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(current_user);
+  const [camReady, setCamReady] = useState(false);
+
 
   const handleSelectUser = (user) => {
     setSelectedUser(user);
@@ -284,7 +288,7 @@ const Interface = () => {
     setUserList(Object.keys(data));
     console.log(userList);
   })
-},[current_user])
+},[user])
 
   // // Example button to trigger the notification ( MODIFY TO ACCEPT STATE FROM FIREBASE)
   // useEffect(() => {
@@ -340,27 +344,34 @@ const Interface = () => {
     });
   }, [screenIndex, postureNudge]);
 
-  // TODO: Retrieve active user from DB
-  useEffect(() => {
-    const fetchUser = async () => {
-    const userRef = ref(database, 'Controls/UserTable');
-      onValue(userRef, (snapshot) => {
-        const user = snapshot.val(); // Convert to boolean
-        setCurrentUser(user);
-        setSelectedUser(user);
-      });
-    }
-    fetchUser();
-  }, [screenIndex,current_user]);
+ 
 
   // Retrieve the control states from DB
   useEffect(() => {
-    const fetchData = async () => {
+
+    const userRef = ref(database, 'Controls/UserTable');
+    onValue(userRef, (snapshot) => {
+      const user = snapshot.val(); // Convert to boolean
+      setCurrentUser(user);
+    });
+
+    const fetchData =  () => {
       // Listen for changes in PostureCamera (offCam) state
       const offCamRef = ref(database, 'Controls/PostureCamera');
       onValue(offCamRef, (snapshot) => {
+        if (snapshot.val()===1) {
         const offCamState = !!snapshot.val(); // Convert to boolean
         setActiveButtons(prevState => ({ ...prevState, offCam: offCamState }));
+        console.log('line 365' +snapshot.val())
+        }
+        if (snapshot.val()===2) {
+          setCamReady(true);
+          
+        }
+        if (snapshot.val()===1) {
+          console.log('off');
+          setCamReady(false);
+        }
       });
   
       // Listen for changes in ChargingCamera (offCharge) state
@@ -397,7 +408,7 @@ const Interface = () => {
     };
   
     fetchData();
-  }, [database]); // Make sure to include `database` or relevant dependencies here if they might change or are dynamically set.
+  }, [database, screenIndex]); // Make sure to include `database` or relevant dependencies here if they might change or are dynamically set.
   
 
   useEffect(() => {
@@ -486,7 +497,6 @@ const Interface = () => {
       path = "PostureCamera";
       console.log(path);
     }
-    console.log(buttonKey);
     if (buttonKey === "offAI") {
       path = "AI";
       console.log(path);
@@ -781,6 +791,15 @@ const Interface = () => {
     borderRadius: '25px'
   };
 
+  const baseButtonStyleCam = {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '75%',
+    height: '170px', 
+    borderRadius: '25px'
+  };
+
   const getButtonStyleP = (preset) => ({
     ...baseButtonStyleP,
     backgroundColor: activePreset === preset ? '#A9FF9B' : '#444444', // Change background color if active
@@ -790,6 +809,21 @@ const Interface = () => {
     ...baseButtonStyleC,
     backgroundColor: activeButtons[buttonKey] ? '#A9FF9B' : '#444444', // Change background color if active
   });
+
+  const getButtonStyleCam = (buttonKey) => {
+    if (camReady){
+    return {
+    ...baseButtonStyleCam,
+    backgroundColor: activeButtons[buttonKey] ? '#A9FF9B' : '#444444', // Change background color if active
+  }}else{
+    console.log('rendering white')
+    return {
+      ...baseButtonStyleCam,
+      backgroundColor: activeButtons[buttonKey] ? '#F4B54C' : '#444444', // Change background color if active
+    }
+
+  }
+};
 
   const getButtonStyleForTheme = (settingsPg) => {
     const isBold = settingsPg === 'pg2' || settingsPg === 'pg3' || settingsPg === 'pg4' || settingsPg === 'pg5';
@@ -1040,7 +1074,7 @@ startAt(oneHourAgo.toString()) // Convert the startTime to string if it's a numb
               : <img src={chargeGreen} alt="Charge Icon" style={styles.icon} />
             }
           </button>
-          <button onClick={() => handleButtonClick('offCam')} style={getButtonStyleC('offCam')}>
+          <button onClick={() => handleButtonClick('offCam')} style={getButtonStyleCam('offCam')}>
             {
               activeButtons['offCam']
               ? <img src={camGreenOff} alt="Cam Icon Off" style={{ width: '120px', height: '100px' }} />
