@@ -26,7 +26,7 @@ def capture_images(output_dir, num_images, interval):
             capture_image(file_name)
             bucket = storage.bucket()
             blob = bucket.blob(file_name)
-            blob.upload_from_filename(local_file_path)
+            blob.upload_from_filename(file_name)
 
 
 def capture_image(file_path):
@@ -62,7 +62,7 @@ if __name__ == "__main__":
         if  BiometricRecroding == 1:
             print("biometric recording")
             num_images = 5
-            interval = 3  # seconds
+            interval = 1  # seconds
             img_dir = "SetUpImages"
             capture_images(img_dir, num_images, interval)
             ref.child('Controls/').update({'BiometricRecording':3})
