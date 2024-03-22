@@ -1,7 +1,7 @@
 import time
 import picamera
 import firebase_admin
-
+from firebase_admin import credentials
 from firebase_admin import initialize_app, storage
 from firebase_admin import db
 
@@ -31,11 +31,12 @@ def capture_image(file_path):
 
 if __name__ == "__main__":
         # Initialize Firebase Admin SDK
+    cred = credentials.Certificate("intellidesk-174c9-firebase-adminsdk-garkf-abe9a9fb75.json")
     service_account_path = "intellidesk-174c9-firebase-adminsdk-garkf-abe9a9fb75.json"  # Path to your service account JSON file
     firebase_config = {
         'storageBucket': 'intellidesk-174c9.appspot.com'
     }
-    initialize_app(credential=service_account_path, options=firebase_config)
+    initialize_app(cred,firebase_config)
     file_name = "/home/pi/image.jpg"
     local_file_path = "/home/pi/image.jpg"  # Local path to save the captured image
     # Capture image here using picamera or another library
