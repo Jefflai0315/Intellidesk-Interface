@@ -5,8 +5,6 @@ import firebase_admin
 from firebase_admin import initialize_app, storage
 from firebase_admin import db
 
-def initialize_firebase():
-
 
 
 
