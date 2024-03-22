@@ -58,12 +58,15 @@ if __name__ == "__main__":
     while True: 
         PostureCamera = ref.child('Controls/PostureCamera').get()
         BiometricRecroding = ref.child('Controls/BiometricRecording').get()
+        print(PostureCamera,BiometricRecroding)
         if  BiometricRecroding == 1:
+            print("biometric recording")
             num_images = 5
             interval = 3  # seconds
             img_dir = "SetUpImages"
 
         elif PostureCamera == 1:
+            print("posture camera")
            
             time.sleep(2)
             capture_image(local_file_path)
