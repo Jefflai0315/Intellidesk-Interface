@@ -14,7 +14,7 @@ from firebase_admin import db
 #     }
 #     initialize_app(credential=service_account_path, options=firebase_config)
 #     return db.reference()
-def capture_images(self,output_dir, num_images, interval):
+def capture_images(output_dir, num_images, interval):
         # Create the output directory if it doesn't exist
 
 
@@ -64,6 +64,8 @@ if __name__ == "__main__":
             num_images = 5
             interval = 3  # seconds
             img_dir = "SetUpImages"
+            capture_images(img_dir, num_images, interval)
+            ref.child('Controls/').update({'BiometricRecording':3})
 
         elif PostureCamera == 1:
             print("posture camera")
