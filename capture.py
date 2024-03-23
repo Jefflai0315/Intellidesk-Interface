@@ -34,9 +34,9 @@ def capture_image(file_path):
         # Adjust camera settings as needed
         camera.resolution = (1080, 1920)  # Set resolution
         camera.rotation = 180  # Set rotation (0, 90, 180, 270)
-        camera.start_preview()
+        # camera.start_preview()
         # Camera warm-up time
-        time.sleep(2)
+        time.sleep(1)
         # Capture image
         camera.capture(file_path)
         print(f"Image captured and saved to: {file_path}")
@@ -67,7 +67,7 @@ if __name__ == "__main__":
             capture_images(img_dir, num_images, interval)
             ref.child('Controls/').update({'BiometricRecording':3})
 
-        elif PostureCamera == 1:
+        elif PostureCamera == 1 or PostureCamera == 2:
             print("posture camera")
            
             time.sleep(3)
