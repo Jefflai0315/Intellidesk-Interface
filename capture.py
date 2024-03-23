@@ -36,7 +36,6 @@ def capture_image(file_path):
         camera.rotation = 180  # Set rotation (0, 90, 180, 270)
         # camera.start_preview()
         # Camera warm-up time
-        time.sleep(1)
         # Capture image
         camera.capture(file_path)
         print(f"Image captured and saved to: {file_path}")
@@ -69,8 +68,7 @@ if __name__ == "__main__":
 
         elif PostureCamera == 1 or PostureCamera == 2:
             print("posture camera")
-           
-            time.sleep(3)
+            time.sleep(2)
             capture_image(local_file_path)
 
             # Upload image to Firebase Storage
