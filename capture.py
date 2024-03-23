@@ -68,7 +68,7 @@ if __name__ == "__main__":
 
         elif PostureCamera == 1 or PostureCamera == 2:
             print("posture camera")
-            time.sleep(2)
+            time.sleep(1)
             capture_image(local_file_path)
 
             # Upload image to Firebase Storage
