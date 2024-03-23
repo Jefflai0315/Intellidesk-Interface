@@ -32,7 +32,7 @@ def capture_images(output_dir, num_images, interval):
 def capture_image(file_path):
     with picamera.PiCamera() as camera:
         # Adjust camera settings as needed
-        camera.resolution = (1080, 1920)  # Set resolution
+        camera.resolution = (1480, 1920)  # Set resolution
         camera.rotation = 180  # Set rotation (0, 90, 180, 270)
         # camera.start_preview()
         # Camera warm-up time
